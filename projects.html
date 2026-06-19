@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الكيتات — Robokit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+.page-head{padding-block:56px 0;border-bottom:1px solid var(--border);}
+.page-title{font-size:clamp(2rem,4vw,3rem);font-weight:900;margin-bottom:10px;}
+.page-sub{color:var(--text-muted);font-size:1rem;max-width:560px;}
+section{padding-block:48px;}
+.level-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px;}
+.level-tab{display:flex;align-items:center;gap:9px;padding:12px 22px;border:1px solid var(--border);border-radius:999px;font-weight:700;font-size:.92rem;color:var(--text-muted);transition:all .2s;cursor:pointer;}
+.level-tab .ldots{display:flex;gap:3px;}
+.level-tab .ldots span{width:6px;height:6px;border-radius:50%;background:var(--border);}
+.level-tab .ldots span.on{background:currentColor;}
+.level-tab.active{border-color:var(--orange);color:var(--orange);background:rgba(255,90,31,.07);}
+.level-tab:not(.active):hover{border-color:var(--text-faint);color:var(--text);}
+.level-tagline{color:var(--text-muted);font-size:.95rem;margin-bottom:32px;max-width:640px;}
+.kits-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;}
+.kits-grid[hidden]{display:none;}
+.kit-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px;display:flex;flex-direction:column;gap:12px;transition:border-color .2s,transform .2s;position:relative;}
+.kit-card:hover{border-color:var(--orange-dim);transform:translateY(-3px);}
+.kit-card-top{display:flex;align-items:center;justify-content:space-between;}
+.kit-code{font-family:var(--font-mono);font-size:.75rem;color:var(--text-faint);}
+.kit-lvl{display:flex;gap:4px;}
+.kit-lvl span{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.kit-lvl span.on{background:var(--orange);box-shadow:0 0 5px var(--orange);}
+.kit-badge{position:absolute;top:-11px;inset-inline-start:20px;background:var(--orange);color:#110d0a;font-size:.7rem;font-weight:800;padding:4px 12px;border-radius:999px;}
+.kit-title{font-size:1.1rem;font-weight:800;}
+.kit-desc{font-size:.88rem;color:var(--text-muted);flex-grow:1;}
+.kit-price{font-family:var(--font-mono);font-size:1.35rem;font-weight:700;color:var(--orange);}
+.kit-price small{font-size:.78rem;color:var(--text-muted);font-weight:400;margin-inline-start:4px;}
+.kit-btn{width:100%;}
+@media(max-width:600px){section{padding-block:36px;}}
+</style>
+</head>
+<body>
+<div id="headerMount"></div>
+
+<div class="page-head">
+  <div class="container">
+    <span style="font-family:var(--font-mono);font-size:.78rem;color:var(--orange);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:10px;">الكيتات</span>
+    <h1 class="page-title">اختر مشروعك</h1>
+    <p class="page-sub">15 مشروع على ثلاثة مستويات. اضغط على أي كيت لتشوف التفاصيل وتخصّص القطع قبل الشراء.</p>
+  </div>
+</div>
+
+<main>
+  <section>
+    <div class="container">
+      <div class="level-tabs" id="levelTabs">
+        <button class="level-tab active" data-level="medium">
+          <span class="ldots"><span class="on"></span><span></span><span></span></span>متوسط
+        </button>
+        <button class="level-tab" data-level="strong">
+          <span class="ldots"><span class="on"></span><span class="on"></span><span></span></span>قوي
+        </button>
+        <button class="level-tab" data-level="extreme">
+          <span class="ldots"><span class="on"></span><span class="on"></span><span class="on"></span></span>سفّاح
+        </button>
+      </div>
+      <p class="level-tagline" id="levelTagline"></p>
+      <div id="grid-medium" class="kits-grid"></div>
+      <div id="grid-strong" class="kits-grid" hidden></div>
+      <div id="grid-extreme" class="kits-grid" hidden></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="brand"><span class="brand-mark"><span class="bot-face"><span class="eye"></span><span class="eye"></span></span></span><span class="brand-text">ROBOKIT</span></div>
+    <div class="footer-links">
+      <a href="index.html">الرئيسية</a>
+      <a href="index.html#videos">الفيديوهات</a>
+      <a href="admin.html">لوحة التحكم</a>
+    </div>
+    <span class="footer-copy">© 2026 Robokit</span>
+  </div>
+</footer>
+
+<div id="cartMount"></div>
+<div id="toast"></div>
+<script src="shared.js"></script>
+<script>
+let LEVELS = null;
+const DOTS = {medium:1,strong:2,extreme:3};
+let activeLevel = 'medium';
+
+(async function(){
+  document.getElementById('headerMount').innerHTML = renderHeader('projects');
+  document.getElementById('cartMount').innerHTML = renderCartDrawer();
+  updateCartBadge();
+  await detectApi();
+  LEVELS = await loadCatalog();
+  if(!LEVELS){document.getElementById('grid-medium').innerHTML='<p style="color:var(--text-faint)">تعذّر تحميل الكيتات</p>';return;}
+
+  // Check URL param
+  const params = new URLSearchParams(location.search);
+  const lvl = params.get('level');
+  if(lvl && ['medium','strong','extreme'].includes(lvl)) activeLevel = lvl;
+
+  renderAllGrids();
+  setLevel(activeLevel);
+})();
+
+function renderAllGrids(){
+  ['medium','strong','extreme'].forEach(lk=>{
+    const grid = document.getElementById('grid-'+lk);
+    const n = DOTS[lk];
+    grid.innerHTML = LEVELS[lk].items.map(item=>{
+      const dots=[1,2,3].map(i=>`<span class="${i<=n?'on':''}"></span>`).join('');
+      return `
+      <article class="kit-card">
+        ${item.badge?`<span class="kit-badge">الأكثر طلبًا</span>`:''}
+        <div class="kit-card-top">
+          <span class="kit-code">${item.code}</span>
+          <span class="kit-lvl">${dots}</span>
+        </div>
+        <h3 class="kit-title">${escHtml(item.title)}</h3>
+        <p class="kit-desc">${escHtml(item.desc)}</p>
+        <div class="kit-price">${kitTotal(item)}<small>${CURRENCY}</small></div>
+        <a href="kit.html?level=${lk}&code=${item.code}" class="btn btn-primary kit-btn">التفاصيل والشراء</a>
+      </article>`;
+    }).join('');
+  });
+}
+
+function setLevel(lk){
+  activeLevel = lk;
+  document.querySelectorAll('.level-tab').forEach(t=>t.classList.toggle('active', t.dataset.level===lk));
+  ['medium','strong','extreme'].forEach(k=>{ document.getElementById('grid-'+k).hidden = k!==lk; });
+  document.getElementById('levelTagline').textContent = LEVELS[lk].tagline;
+}
+
+document.getElementById('levelTabs').addEventListener('click', e=>{
+  const tab = e.target.closest('.level-tab');
+  if(tab) setLevel(tab.dataset.level);
+});
+</script>
+</body>
+</html>

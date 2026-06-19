@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم — Robokit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+body{min-height:100vh;}
+.admin-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background-image:radial-gradient(var(--border) 1px,transparent 1px);background-size:30px 30px;}
+.login-card{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:36px;}
+.login-card .brand{margin-bottom:24px;}
+.login-card h2{font-size:1.4rem;font-weight:900;margin-bottom:6px;}
+.login-card p{color:var(--text-muted);font-size:.9rem;margin-bottom:24px;}
+.error-msg{color:var(--orange);font-size:.85rem;text-align:center;margin-top:8px;}
+.back-link{display:block;text-align:center;color:var(--text-muted);font-size:.85rem;margin-top:14px;transition:color .2s;}
+.back-link:hover{color:var(--orange);}
+/* Dashboard */
+.admin-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px;background:var(--surface);position:sticky;top:0;z-index:50;}
+.admin-status{font-size:.78rem;color:var(--text-faint);font-family:var(--font-mono);}
+.admin-tabs{display:flex;gap:8px;padding:18px 24px 0;border-bottom:1px solid var(--border);}
+.admin-tab{padding:11px 24px;border-radius:999px;border:1px solid var(--border);font-weight:700;font-size:.9rem;color:var(--text-muted);transition:all .2s;}
+.admin-tab.active{border-color:var(--orange);color:var(--orange);background:rgba(255,90,31,.07);}
+.admin-content{padding:28px 24px 80px;max-width:980px;margin-inline:auto;}
+.panel-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap;}
+.panel-toolbar h2{font-size:1.2rem;font-weight:800;}
+/* Orders */
+.orders-empty{color:var(--text-muted);text-align:center;padding:48px;border:1px dashed var(--border);border-radius:var(--radius);}
+.order-card{border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:16px;}
+.order-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px;}
+.order-id{font-family:var(--font-mono);font-size:.92rem;}
+.order-date{font-family:var(--font-mono);font-size:.75rem;color:var(--text-faint);}
+.status-select{background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:var(--radius-sm);font-family:inherit;font-size:.85rem;width:auto;}
+.order-customer{display:flex;gap:20px;flex-wrap:wrap;font-size:.88rem;color:var(--text-muted);margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.order-customer b{color:var(--text);}
+.order-items{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;}
+.order-item{display:flex;justify-content:space-between;font-size:.87rem;}
+.order-item .dim{font-size:.78rem;color:var(--text-faint);}
+.order-total{display:flex;justify-content:space-between;font-weight:800;padding-top:10px;border-top:1px solid var(--border);}
+.order-total strong{color:var(--orange);font-family:var(--font-mono);}
+/* Catalog editor */
+.cat-level-tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
+.cat-level-tab{padding:10px 20px;border-radius:999px;border:1px solid var(--border);font-weight:700;font-size:.88rem;color:var(--text-muted);transition:all .2s;}
+.cat-level-tab.active{border-color:var(--orange);color:var(--orange);background:rgba(255,90,31,.07);}
+.kit-edit{border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:18px;}
+.kit-edit-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.kit-edit-code{font-family:var(--font-mono);font-size:.82rem;color:var(--text-faint);}
+.badge-toggle{display:flex;align-items:center;gap:6px;font-size:.82rem;color:var(--text-muted);}
+.badge-toggle input{accent-color:var(--orange);width:15px;height:15px;}
+.parts-edit{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.part-edit-row{display:grid;grid-template-columns:1fr 84px auto auto;gap:8px;align-items:center;}
+.rm-part{width:36px;height:36px;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-faint);font-size:1.1rem;transition:all .2s;}
+.rm-part:hover{border-color:var(--orange);color:var(--orange);}
+.kit-edit-total{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:.9rem;color:var(--text-muted);}
+.kit-edit-total strong{color:var(--orange);font-family:var(--font-mono);}
+.core-toggle{display:flex;align-items:center;gap:5px;font-size:.8rem;color:var(--text-muted);white-space:nowrap;}
+.core-toggle input{accent-color:var(--orange);width:14px;height:14px;}
+.confirm-state{border-color:var(--orange)!important;color:var(--orange)!important;}
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="admin-login" id="loginView">
+  <div class="login-card">
+    <div class="brand"><span class="brand-mark"><span class="bot-face"><span class="eye"></span><span class="eye"></span></span></span><span class="brand-text">ROBOKIT</span></div>
+    <h2>لوحة التحكم</h2>
+    <p>إدارة الطلبات والكيتات والأسعار.</p>
+    <div class="field"><label>كلمة المرور</label><input type="password" id="pwInput" placeholder="••••••••"></div>
+    <button class="btn btn-primary btn-full" id="loginBtn">دخول</button>
+    <p class="error-msg" id="loginError" hidden>كلمة المرور غير صحيحة</p>
+    <a href="index.html" class="back-link">← عودة إلى الموقع</a>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashView" hidden>
+  <div class="admin-header">
+    <div class="brand"><span class="brand-mark"><span class="bot-face"><span class="eye"></span><span class="eye"></span></span></span><span class="brand-text">ROBOKIT <span class="admin-status" id="apiStatus"></span></span></div>
+    <div style="display:flex;gap:10px;">
+      <a href="index.html" class="btn btn-outline btn-sm">عرض الموقع</a>
+      <button class="btn btn-outline btn-sm" id="logoutBtn">تسجيل خروج</button>
+    </div>
+  </div>
+  <div class="admin-tabs">
+    <button class="admin-tab active" data-tab="orders">الطلبات</button>
+    <button class="admin-tab" data-tab="catalog">الكيتات والأسعار</button>
+  </div>
+  <div class="admin-content">
+    <section id="ordersPanel">
+      <div class="panel-toolbar"><h2>الطلبات الواردة</h2><span id="ordersCount" style="color:var(--text-muted);font-size:.9rem;"></span></div>
+      <div id="ordersList"></div>
+    </section>
+    <section id="catalogPanel" hidden>
+      <div class="panel-toolbar">
+        <h2>الكيتات والأسعار</h2>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm" id="resetBtn">استعادة الافتراضي</button>
+          <button class="btn btn-primary btn-sm" id="saveBtn">حفظ ونشر</button>
+        </div>
+      </div>
+      <div class="cat-level-tabs" id="catTabs">
+        <button class="cat-level-tab active" data-level="medium">متوسط</button>
+        <button class="cat-level-tab" data-level="strong">قوي</button>
+        <button class="cat-level-tab" data-level="extreme">سفّاح</button>
+      </div>
+      <div id="catalogEditor"></div>
+    </section>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="shared.js"></script>
+<script>
+let LEVELS = null;
+let isAuthed = false;
+let resetTimer = null;
+const ORDER_STATUSES_LIST = ['قيد المراجعة','قيد التجهيز','تم الشحن','مكتمل','ملغي'];
+
+// ---- Login ----
+async function doLogin(){
+  const pw = document.getElementById('pwInput').value;
+  if(USE_API){
+    try{
+      const res = await fetch(API_BASE_URL+'/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
+      if(!res.ok){document.getElementById('loginError').hidden=false;return;}
+      const d=await res.json(); adminToken=d.token;
+    }catch(e){document.getElementById('loginError').hidden=false;return;}
+  } else {
+    if(pw!==ADMIN_PASSWORD){document.getElementById('loginError').hidden=false;return;}
+  }
+  isAuthed=true;
+  document.getElementById('loginError').hidden=true;
+  document.getElementById('loginView').hidden=true;
+  document.getElementById('dashView').hidden=false;
+  document.getElementById('apiStatus').textContent = USE_API ? '— متصل بالخادم' : '— وضع تجريبي';
+  showOrders();
+}
+document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.getElementById('pwInput').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('logoutBtn').addEventListener('click', ()=>{ isAuthed=false; adminToken=null; location.reload(); });
+
+// ---- Tabs ----
+document.querySelectorAll('.admin-tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById('ordersPanel').hidden = t.dataset.tab!=='orders';
+  document.getElementById('catalogPanel').hidden = t.dataset.tab!=='catalog';
+  if(t.dataset.tab==='orders') showOrders();
+  if(t.dataset.tab==='catalog') showCatalog('medium');
+}));
+
+// ---- Orders ----
+async function showOrders(){
+  let orders=[];
+  if(USE_API && adminToken){
+    try{ const r=await adminFetch('/api/orders'); if(r.ok) orders=await r.json(); }catch(e){}
+  } else {
+    orders = await storageGetOrders();
+  }
+  const el=document.getElementById('ordersList');
+  document.getElementById('ordersCount').textContent = orders.length ? orders.length+' طلب' : '';
+  if(!orders.length){el.innerHTML='<div class="orders-empty">لا توجد طلبات حتى الآن.</div>';return;}
+  const sorted=[...orders].sort((a,b)=>new Date(b.date||b.created_at)-new Date(a.date||a.created_at));
+  el.innerHTML=sorted.map(o=>`
+    <div class="order-card">
+      <div class="order-head">
+        <div><span class="order-id">${o.id}</span> <span class="order-date">${new Date(o.date||o.created_at).toLocaleString('ar-JO')}</span></div>
+        <select class="status-select" data-id="${o.id}" onchange="updateStatus('${o.id}',this.value)">
+          ${ORDER_STATUSES_LIST.map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="order-customer">
+        <span><b>${escHtml(o.customer?.name||'')}</b></span>
+        <span>${escHtml(o.customer?.phone||'')}</span>
+        <span>${escHtml(o.customer?.address||'')}</span>
+      </div>
+      <div class="order-items">
+        ${(o.items||[]).map(it=>`<div class="order-item"><span>${escHtml(it.title)} <span class="dim">${it.code} · ${it.note}</span></span><span>${it.total} ${CURRENCY}</span></div>`).join('')}
+      </div>
+      <div class="order-total"><span>الإجمالي</span><strong>${o.total} ${CURRENCY}</strong></div>
+    </div>`).join('');
+}
+
+async function updateStatus(id, status){
+  if(USE_API && adminToken){
+    await adminFetch('/api/orders/'+id+'/status',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
+  } else {
+    const orders=await storageGetOrders();
+    const o=orders.find(x=>x.id===id);
+    if(o){o.status=status;await storageSetOrders(orders);}
+  }
+  showToast('تم تحديث حالة الطلب');
+}
+
+// ---- Catalog editor ----
+async function showCatalog(levelKey){
+  if(!LEVELS){
+    await detectApi();
+    LEVELS = await loadCatalog() || JSON.parse(JSON.stringify(DEFAULT_LEVELS));
+  }
+  document.querySelectorAll('.cat-level-tab').forEach(t=>t.classList.toggle('active',t.dataset.level===levelKey));
+  renderEditor(levelKey);
+}
+document.getElementById('catTabs').addEventListener('click',e=>{
+  const t=e.target.closest('.cat-level-tab');
+  if(t) showCatalog(t.dataset.level);
+});
+
+function renderEditor(lk){
+  const level=LEVELS[lk];
+  document.getElementById('catalogEditor').innerHTML=`
+    <div class="field" style="margin-bottom:24px;">
+      <label>وصف المستوى</label>
+      <textarea class="f-tagline" data-level="${lk}">${escHtml(level.tagline)}</textarea>
+    </div>
+    ${level.items.map((item,idx)=>`
+    <div class="kit-edit" data-level="${lk}" data-idx="${idx}">
+      <div class="kit-edit-header">
+        <span class="kit-edit-code">${item.code}</span>
+        <label class="badge-toggle"><input type="checkbox" class="f-badge" ${item.badge?'checked':''}> الأكثر طلبًا</label>
+      </div>
+      <div class="field"><label>عنوان المشروع</label><input type="text" class="f-title" value="${escHtml(item.title)}"></div>
+      <div class="field"><label>الوصف</label><textarea class="f-desc">${escHtml(item.desc)}</textarea></div>
+      <div class="field"><label>القطع</label>
+        <div class="parts-edit">
+          ${item.parts.map((p,pi)=>`
+          <div class="part-edit-row" data-pi="${pi}">
+            <input type="text" class="f-pname" value="${escHtml(p.name)}">
+            <input type="number" class="f-pprice" value="${p.price}" min="0">
+            <label class="core-toggle"><input type="checkbox" class="f-pcore" ${p.core?'checked':''}> أساسي</label>
+            <button class="rm-part" type="button" title="حذف">×</button>
+          </div>`).join('')}
+        </div>
+        <button class="btn btn-outline btn-sm add-part" type="button">+ إضافة قطعة</button>
+      </div>
+      <div class="kit-edit-total">السعر: <strong>${kitTotal(item)} ${CURRENCY}</strong></div>
+    </div>`).join('')}`;
+}
+
+// Live edit
+document.getElementById('catalogEditor').addEventListener('input', e=>{
+  const t=e.target;
+  const tl=t.closest('.f-tagline');
+  if(tl){LEVELS[tl.dataset.level].tagline=t.value;return;}
+  const ke=t.closest('.kit-edit');
+  if(!ke)return;
+  const item=LEVELS[ke.dataset.level].items[Number(ke.dataset.idx)];
+  if(t.classList.contains('f-title')) item.title=t.value;
+  else if(t.classList.contains('f-desc')) item.desc=t.value;
+  else if(t.classList.contains('f-pname')) item.parts[Number(t.closest('.part-edit-row').dataset.pi)].name=t.value;
+  else if(t.classList.contains('f-pprice')){
+    item.parts[Number(t.closest('.part-edit-row').dataset.pi)].price=Number(t.value)||0;
+    ke.querySelector('.kit-edit-total strong').textContent=kitTotal(item)+' '+CURRENCY;
+  }
+});
+document.getElementById('catalogEditor').addEventListener('change',e=>{
+  const t=e.target; const ke=t.closest('.kit-edit');
+  if(!ke)return;
+  const item=LEVELS[ke.dataset.level].items[Number(ke.dataset.idx)];
+  if(t.classList.contains('f-badge')) item.badge=t.checked;
+  else if(t.classList.contains('f-pcore')) item.parts[Number(t.closest('.part-edit-row').dataset.pi)].core=t.checked;
+});
+document.getElementById('catalogEditor').addEventListener('click',e=>{
+  const rm=e.target.closest('.rm-part');
+  if(rm){
+    const ke=rm.closest('.kit-edit');
+    const item=LEVELS[ke.dataset.level].items[Number(ke.dataset.idx)];
+    if(item.parts.length<=1){showToast('لازم تبقى قطعة واحدة على الأقل');return;}
+    item.parts.splice(Number(rm.closest('.part-edit-row').dataset.pi),1);
+    renderEditor(ke.dataset.level); return;
+  }
+  const add=e.target.closest('.add-part');
+  if(add){
+    const ke=add.closest('.kit-edit');
+    LEVELS[ke.dataset.level].items[Number(ke.dataset.idx)].parts.push({name:'قطعة جديدة',price:0,core:false});
+    renderEditor(ke.dataset.level);
+  }
+});
+
+document.getElementById('saveBtn').addEventListener('click', async()=>{
+  let ok=false;
+  if(USE_API && adminToken){
+    try{const r=await adminFetch('/api/catalog',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(LEVELS)});ok=r.ok;}catch(e){}
+  } else {
+    await storageSetCatalog(LEVELS); ok=true;
+  }
+  showToast(ok?'تم الحفظ والنشر على الموقع':'تعذّر الحفظ على الخادم');
+});
+
+document.getElementById('resetBtn').addEventListener('click', async()=>{
+  const btn=document.getElementById('resetBtn');
+  if(!btn.classList.contains('confirm-state')){
+    btn.classList.add('confirm-state'); btn.textContent='تأكيد الاستعادة؟';
+    resetTimer=setTimeout(()=>{btn.classList.remove('confirm-state');btn.textContent='استعادة الافتراضي';},3000);
+    return;
+  }
+  clearTimeout(resetTimer); btn.classList.remove('confirm-state'); btn.textContent='استعادة الافتراضي';
+  LEVELS=JSON.parse(JSON.stringify(DEFAULT_LEVELS));
+  const active=document.querySelector('.cat-level-tab.active');
+  renderEditor(active?active.dataset.level:'medium');
+  showToast('تمت الاستعادة — اضغط "حفظ ونشر" لتطبيقها');
+});
+
+// ---- Init ----
+(async function(){
+  await detectApi();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تفاصيل الكيت — Robokit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+.breadcrumb{display:flex;align-items:center;gap:8px;padding-block:20px;font-size:.85rem;color:var(--text-muted);}
+.breadcrumb a{transition:color .2s;}.breadcrumb a:hover{color:var(--orange);}
+.breadcrumb span{color:var(--text-faint);}
+.kit-layout{display:grid;grid-template-columns:1fr 380px;gap:40px;padding-block:0 80px;align-items:start;}
+/* Left: info */
+.kit-info{}
+.kit-meta{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.kit-code{font-family:var(--font-mono);font-size:.85rem;color:var(--text-faint);}
+.kit-level-badge{font-size:.75rem;font-weight:700;color:var(--orange);border:1px solid var(--orange-dim);border-radius:999px;padding:4px 12px;}
+.kit-title{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:900;margin-bottom:14px;line-height:1.2;}
+.kit-desc{font-size:1rem;color:var(--text-muted);margin-bottom:30px;max-width:560px;}
+.includes-list{display:grid;gap:14px;margin-bottom:36px;}
+.inc-item{display:flex;gap:14px;align-items:flex-start;}
+.inc-icon{width:38px;height:38px;border-radius:var(--radius-sm);background:rgba(255,90,31,.1);display:flex;align-items:center;justify-content:center;color:var(--orange);flex-shrink:0;}
+.inc-icon svg{width:18px;height:18px;}
+.inc-text b{display:block;font-size:.92rem;margin-bottom:2px;}
+.inc-text span{font-size:.84rem;color:var(--text-muted);}
+.video-block{aspect-ratio:16/9;border-radius:var(--radius);background:linear-gradient(135deg,var(--surface),#0a0a0b);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:24px;user-select:none;position:relative;overflow:hidden;}
+.video-block .wm{position:absolute;font-size:2.2rem;font-weight:900;color:rgba(255,90,31,.04);letter-spacing:.3em;transform:rotate(-18deg);white-space:nowrap;}
+.video-block svg{position:relative;width:28px;height:28px;color:var(--orange);}
+.video-block strong{position:relative;font-size:.95rem;}
+.video-block p{position:relative;font-size:.84rem;color:var(--text-muted);max-width:360px;}
+/* Right: parts + buy */
+.kit-sidebar{position:sticky;top:90px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.sidebar-head{padding:22px 22px 16px;border-bottom:1px solid var(--border);}
+.sidebar-head h3{font-size:1rem;font-weight:800;margin-bottom:4px;}
+.sidebar-hint{font-size:.82rem;color:var(--text-muted);}
+.parts-list{padding:16px 22px;}
+.part-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.parts-list .part-row:last-child{border-bottom:none;}
+.part-row.core{cursor:default;}
+.part-left{display:flex;align-items:center;gap:10px;font-size:.9rem;}
+.part-left input{width:17px;height:17px;accent-color:var(--orange);flex-shrink:0;}
+.core-tag{font-family:var(--font-mono);font-size:.66rem;color:var(--text-faint);border:1px solid var(--border);border-radius:4px;padding:2px 7px;margin-inline-start:4px;}
+.part-price{font-family:var(--font-mono);font-size:.85rem;color:var(--text-muted);white-space:nowrap;}
+.sidebar-footer{padding:18px 22px;border-top:1px solid var(--border);background:var(--surface-2);}
+.total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.total-label{font-size:.82rem;color:var(--text-muted);}
+.total-val{font-family:var(--font-mono);font-size:1.6rem;font-weight:700;color:var(--orange);}
+@media(max-width:900px){
+  .kit-layout{grid-template-columns:1fr;}
+  .kit-sidebar{position:static;}
+}
+</style>
+</head>
+<body>
+<div id="headerMount"></div>
+
+<main>
+  <div class="container">
+    <nav class="breadcrumb" id="breadcrumb">
+      <a href="index.html">الرئيسية</a>
+      <span>/</span>
+      <a href="projects.html">الكيتات</a>
+      <span>/</span>
+      <span id="breadKit">…</span>
+    </nav>
+
+    <div id="loadingState" style="padding:60px 0;color:var(--text-muted);text-align:center;">جارٍ تحميل الكيت…</div>
+    <div id="kitLayout" class="kit-layout" hidden>
+      <!-- Left -->
+      <div class="kit-info">
+        <div class="kit-meta">
+          <span class="kit-code" id="kitCode"></span>
+          <span class="kit-level-badge" id="kitLevel"></span>
+        </div>
+        <h1 class="kit-title" id="kitTitle"></h1>
+        <p class="kit-desc" id="kitDesc"></p>
+
+        <ul class="includes-list">
+          <li class="inc-item">
+            <span class="inc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></span>
+            <div class="inc-text"><b>القطع كاملة</b><span>جميع المكونات المطلوبة جاهزة للتركيب.</span></div>
+          </li>
+          <li class="inc-item">
+            <span class="inc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v15H6.5A2.5 2.5 0 0 0 4 19.5v-15z"/></svg></span>
+            <div class="inc-text"><b>دليل تركيب مطبوع</b><span>كتيب بالعربية خطوة بخطوة من التوصيل إلى البرمجة.</span></div>
+          </li>
+          <li class="inc-item">
+            <span class="inc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4V8z"/></svg></span>
+            <div class="inc-text"><b>فيديو شرح حصري</b><span>يُعرض بعد الشراء في مكتبتك بالبث المباشر فقط.</span></div>
+          </li>
+        </ul>
+
+        <div class="video-block" oncontextmenu="return false">
+          <span class="wm">ROBOKIT</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          <strong id="videoTitle"></strong>
+          <p>يُفتح هذا الفيديو بعد إتمام الشراء — بث مباشر فقط، بلا روابط تحميل.</p>
+        </div>
+      </div>
+
+      <!-- Right sidebar -->
+      <aside class="kit-sidebar">
+        <div class="sidebar-head">
+          <h3>خصّص قطعك</h3>
+          <p class="sidebar-hint">أزل القطع التي عندك مسبقًا — السعر يتحدث فورًا. القطع الأساسية مطلوبة ولا يمكن إزالتها.</p>
+        </div>
+        <div class="parts-list" id="partsList"></div>
+        <div class="sidebar-footer">
+          <div class="total-row">
+            <span class="total-label">السعر الإجمالي</span>
+            <span class="total-val" id="totalVal">0</span>
+          </div>
+          <button class="btn btn-primary btn-full" id="addToCartBtn">أضف إلى السلة</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="brand"><span class="brand-mark"><span class="bot-face"><span class="eye"></span><span class="eye"></span></span></span><span class="brand-text">ROBOKIT</span></div>
+    <div class="footer-links">
+      <a href="index.html">الرئيسية</a>
+      <a href="projects.html">الكيتات</a>
+      <a href="admin.html">لوحة التحكم</a>
+    </div>
+    <span class="footer-copy">© 2026 Robokit</span>
+  </div>
+</footer>
+
+<div id="cartMount"></div>
+<div id="toast"></div>
+<script src="shared.js"></script>
+<script>
+let currentItem = null;
+let currentLevel = null;
+
+(async function(){
+  document.getElementById('headerMount').innerHTML = renderHeader('projects');
+  document.getElementById('cartMount').innerHTML = renderCartDrawer();
+  updateCartBadge();
+
+  const params = new URLSearchParams(location.search);
+  const level = params.get('level');
+  const code  = params.get('code');
+
+  await detectApi();
+  const LEVELS = await loadCatalog();
+
+  if(!LEVELS || !level || !code){
+    document.getElementById('loadingState').textContent = 'تعذّر تحميل الكيت.';
+    return;
+  }
+
+  const levelData = LEVELS[level];
+  if(!levelData){ document.getElementById('loadingState').textContent = 'المستوى غير موجود.'; return; }
+
+  const item = levelData.items.find(i=>i.code===code);
+  if(!item){ document.getElementById('loadingState').textContent = 'الكيت غير موجود.'; return; }
+
+  currentItem = item;
+  currentLevel = levelData;
+
+  // Populate
+  document.title = item.title + ' — Robokit';
+  document.getElementById('breadKit').textContent = item.title;
+  document.getElementById('kitCode').textContent = item.code;
+  document.getElementById('kitLevel').textContent = levelData.label;
+  document.getElementById('kitTitle').textContent = item.title;
+  document.getElementById('kitDesc').textContent = item.desc;
+  document.getElementById('videoTitle').textContent = 'فيديو شرح — ' + item.title;
+
+  renderParts();
+
+  document.getElementById('loadingState').hidden = true;
+  document.getElementById('kitLayout').hidden = false;
+})();
+
+function renderParts(){
+  const list = document.getElementById('partsList');
+  list.innerHTML = currentItem.parts.map((p,i)=>`
+    <label class="part-row ${p.core?'core':''}">
+      <span class="part-left">
+        <input type="checkbox" class="part-check" data-price="${p.price}" data-idx="${i}" ${p.core?'checked disabled':'checked'}>
+        ${escHtml(p.name)}
+        ${p.core?'<span class="core-tag">أساسي</span>':''}
+      </span>
+      <span class="part-price">${p.price} ${CURRENCY}</span>
+    </label>`).join('');
+  updateTotal();
+
+  list.addEventListener('change', updateTotal);
+}
+
+function updateTotal(){
+  let total = 0;
+  document.querySelectorAll('.part-check').forEach(cb=>{ if(cb.checked) total += Number(cb.dataset.price); });
+  document.getElementById('totalVal').textContent = total + ' ' + CURRENCY;
+}
+
+document.getElementById('addToCartBtn').addEventListener('click', ()=>{
+  let total=0, selected=0;
+  document.querySelectorAll('.part-check').forEach(cb=>{ if(cb.checked){ total+=Number(cb.dataset.price); selected++; } });
+  cartAdd({
+    id: Date.now() + Math.random(),
+    code: currentItem.code,
+    title: currentItem.title,
+    note: selected + ' من ' + currentItem.parts.length + ' قطعة',
+    total
+  });
+  showToast('تمت الإضافة إلى السلة ✓');
+  openCart();
+});
+</script>
+</body>
+</html>
