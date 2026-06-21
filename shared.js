@@ -79,7 +79,7 @@ function renderHeader(activePage=''){
       <nav class="nav" id="siteNav">
         <a href="index.html" class="${activePage==='home'?'active':''}">الرئيسية</a>
         <a href="projects.html" class="${activePage==='projects'?'active':''}">الكيتات</a>
-        <a href="index.html#videos" class="${activePage==='videos'?'active':''}">الفيديوهات</a>
+        <a href="videos.html" class="${activePage==='videos'?'active':''}">الفيديوهات</a>
         <a href="index.html#contact" class="${activePage==='contact'?'active':''}">تواصل معنا</a>
       </nav>
       <div class="hdr-right">

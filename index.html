@@ -9,177 +9,37 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 <style>
-.hero{position:relative;padding-block:100px 80px;border-bottom:1px solid var(--border);overflow:hidden;}
-.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(var(--border) 1px,transparent 1px);background-size:30px 30px;mask-image:linear-gradient(to bottom,black,transparent 80%);opacity:.45;}
-.hero .container{position:relative;z-index:1;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:.78rem;color:var(--orange);border:1px solid var(--orange-dim);border-radius:999px;padding:6px 16px;letter-spacing:.06em;margin-bottom:20px;}
-.hero-title{font-size:clamp(2.6rem,5.5vw,4.6rem);font-weight:900;line-height:1.12;margin-bottom:18px;}
-.hero-title span{color:var(--orange);}
-.hero-text{font-size:1.05rem;color:var(--text-muted);max-width:500px;margin-bottom:32px;}
-.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:48px;}
-.hero-stats{display:flex;gap:36px;flex-wrap:wrap;}
-.hero-stat strong{display:block;font-family:var(--font-mono);font-size:1.7rem;color:var(--orange);margin-bottom:2px;}
-.hero-stat span{font-size:.82rem;color:var(--text-muted);}
-.hero-visual{display:flex;align-items:center;justify-content:center;height:300px;position:relative;}
-.hero-visual::before,.hero-visual::after{content:'';position:absolute;width:60px;height:60px;border:2px solid var(--orange-dim);}
-.hero-visual::before{top:10px;right:10px;border-width:2px 2px 0 0;}
-.hero-visual::after{bottom:10px;left:10px;border-width:0 0 2px 2px;}
-.bot-xl{width:150px;height:150px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;}
-.bot-xl .bot-face{width:60%;height:48%;background:var(--bg);border-radius:16px;display:flex;align-items:center;justify-content:center;gap:12px;}
-.bot-xl .eye{width:16px;height:30px;background:var(--orange);border-radius:5px;box-shadow:0 0 16px var(--orange);animation:blink 5s infinite;}
-.bot-xl .eye:nth-child(2){animation-delay:.12s;}
-section{padding-block:80px;}
-.section-border{border-bottom:1px solid var(--border);}
-.sec-head{margin-bottom:44px;}
-.sec-eyebrow{display:block;font-family:var(--font-mono);color:var(--orange);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;}
-.sec-title{font-size:clamp(1.8rem,3vw,2.4rem);font-weight:900;margin-bottom:12px;}
-.sec-text{color:var(--text-muted);font-size:1rem;max-width:580px;}
-.featured-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;}
-.featured-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px;display:flex;flex-direction:column;gap:12px;transition:border-color .2s,transform .2s;position:relative;overflow:hidden;}
-.featured-card:hover{border-color:var(--orange-dim);transform:translateY(-3px);}
-.featured-card::before{content:'';position:absolute;top:0;right:0;left:0;height:2px;background:var(--orange);transform:scaleX(0);transform-origin:right;transition:transform .3s;}
-.featured-card:hover::before{transform:scaleX(1);}
-.fc-badge{display:inline-flex;font-size:.7rem;font-weight:800;color:var(--orange);border:1px solid var(--orange-dim);border-radius:999px;padding:3px 10px;align-self:flex-start;}
-.fc-code{font-family:var(--font-mono);font-size:.75rem;color:var(--text-faint);}
-.fc-title{font-size:1.08rem;font-weight:800;flex-grow:1;}
-.fc-desc{font-size:.88rem;color:var(--text-muted);}
-.fc-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:4px;}
-.fc-price{font-family:var(--font-mono);font-size:1.3rem;font-weight:700;color:var(--orange);}
-.fc-price small{font-size:.75rem;color:var(--text-muted);font-weight:400;margin-inline-start:4px;}
-.fc-level{display:flex;gap:4px;}
-.fc-level span{width:7px;height:7px;border-radius:50%;background:var(--border);}
-.fc-level span.on{background:var(--orange);box-shadow:0 0 5px var(--orange);}
-.featured-cta{text-align:center;margin-top:36px;}
-.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
-.how-card{border:1px solid var(--border);border-radius:var(--radius);padding:30px;}
-.how-num{font-family:var(--font-mono);font-size:.8rem;color:var(--orange);display:block;margin-bottom:16px;}
-.how-card h3{font-size:1.1rem;font-weight:800;margin-bottom:10px;}
-.how-card p{font-size:.9rem;color:var(--text-muted);}
-.levels-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
-.level-card{border:1px solid var(--border);border-radius:var(--radius);padding:28px;display:flex;flex-direction:column;gap:12px;transition:border-color .2s;}
-.level-card:hover{border-color:var(--orange-dim);}
-.level-dots{display:flex;gap:5px;}
-.level-dots span{width:8px;height:8px;border-radius:50%;background:var(--border);}
-.level-dots span.on{background:var(--orange);box-shadow:0 0 6px var(--orange);}
-.level-card h3{font-size:1.25rem;font-weight:900;}
-.level-card p{font-size:.9rem;color:var(--text-muted);flex-grow:1;}
-.level-count{font-family:var(--font-mono);font-size:.78rem;color:var(--text-faint);}
-.video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;}
-.video-card{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
-.video-thumb{aspect-ratio:16/10;background:linear-gradient(135deg,var(--surface),#0a0a0b);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--text-faint);user-select:none;position:relative;overflow:hidden;}
-.video-thumb .wm{position:absolute;font-size:1.6rem;font-weight:900;color:rgba(255,90,31,.04);letter-spacing:.3em;transform:rotate(-18deg);white-space:nowrap;}
-.video-thumb svg{width:22px;height:22px;position:relative;}
-.video-thumb span{font-size:.74rem;position:relative;}
-.video-meta{padding:12px 14px;}
-.video-code{font-family:var(--font-mono);font-size:.7rem;color:var(--text-faint);display:block;margin-bottom:4px;}
-.video-title{font-size:.88rem;font-weight:700;}
-@media(max-width:900px){.hero .container{grid-template-columns:1fr;}.hero-visual{height:180px;order:-1;}.how-grid,.levels-grid{grid-template-columns:1fr;}}
-@media(max-width:600px){section{padding-block:56px;}}
+.placeholder{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;gap:18px;}
+.placeholder .bot-xl{width:110px;height:110px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;margin-bottom:8px;}
+.placeholder .bot-face{width:60%;height:48%;background:var(--bg);border-radius:14px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.placeholder .eye{width:13px;height:24px;background:var(--orange);border-radius:4px;box-shadow:0 0 14px var(--orange);animation:blink 5s infinite;}
+.placeholder .eye:nth-child(2){animation-delay:.12s;}
+.placeholder h1{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:900;}
+.placeholder p{color:var(--text-muted);font-size:1rem;max-width:480px;}
+.placeholder-actions{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:12px;}
 </style>
 </head>
 <body>
 <div id="headerMount"></div>
+
 <main>
-  <section class="hero">
-    <div class="container">
-      <div>
-        <span class="eyebrow">كيتات أردوينو جاهزة للتركيب</span>
-        <h1 class="hero-title">افتح. اقرأ. <span>شغّل.</span></h1>
-        <p class="hero-text">Robokit يجمع لك القطع الكاملة، دليل التركيب بالعربي، وفيديو الشرح في صندوق واحد. ابدأ مشروعك الأول اليوم.</p>
-        <div class="hero-actions">
-          <a href="projects.html" class="btn btn-primary">اكتشف الكيتات</a>
-          <a href="#how" class="btn btn-outline">كيف يعمل؟</a>
-        </div>
-        <div class="hero-stats">
-          <div class="hero-stat"><strong>15</strong><span>مشروعًا جاهزًا</span></div>
-          <div class="hero-stat"><strong>3</strong><span>مستويات صعوبة</span></div>
-          <div class="hero-stat"><strong>100%</strong><span>قطع قابلة للتخصيص</span></div>
-        </div>
-      </div>
-      <div class="hero-visual">
-        <div class="bot-xl"><div class="bot-face"><span class="eye"></span><span class="eye"></span></div></div>
-      </div>
+  <div class="placeholder">
+    <div class="bot-xl"><div class="bot-face"><span class="eye"></span><span class="eye"></span></div></div>
+    <h1>ROBOKIT</h1>
+    <p>المحتوى التعريفي لهذه الصفحة قيد الإعداد حاليًا.</p>
+    <div class="placeholder-actions">
+      <a href="projects.html" class="btn btn-primary">تصفح الكيتات</a>
+      <a href="videos.html" class="btn btn-outline">مكتبة الفيديوهات</a>
     </div>
-  </section>
-
-  <section class="section-border" id="featured">
-    <div class="container">
-      <div class="sec-head">
-        <span class="sec-eyebrow">الأكثر طلبًا</span>
-        <h2 class="sec-title">أبرز الكيتات</h2>
-        <p class="sec-text">اختارها زبائننا أكثر من غيرها — من أول مشروع بسيط إلى تحدي حقيقي.</p>
-      </div>
-      <div class="featured-grid" id="featuredGrid"><div style="color:var(--text-faint);font-size:.9rem">جارٍ تحميل الكيتات…</div></div>
-      <div class="featured-cta"><a href="projects.html" class="btn btn-outline">عرض جميع الكيتات الـ15</a></div>
-    </div>
-  </section>
-
-  <section class="section-border" id="how">
-    <div class="container">
-      <div class="sec-head">
-        <span class="sec-eyebrow">كيف يعمل</span>
-        <h2 class="sec-title">ثلاث خطوات فقط</h2>
-        <p class="sec-text">من لحظة الطلب حتى تشغيل مشروعك الأول.</p>
-      </div>
-      <div class="how-grid">
-        <div class="how-card"><span class="how-num">01 — اختر</span><h3>اختر الكيت المناسب لمستواك</h3><p>ثلاثة مستويات: متوسط للمبتدئين، قوي للمتقدمين، وسفّاح لمن يريد تحديًا حقيقيًا.</p></div>
-        <div class="how-card"><span class="how-num">02 — خصّص</span><h3>أزل القطع التي عندك مسبقًا</h3><p>كل قطعة لها سعر منفصل — ادفع فقط على ما ستستلمه فعلًا.</p></div>
-        <div class="how-card"><span class="how-num">03 — ابنِ</span><h3>افتح الصندوق واتبع الدليل والفيديو</h3><p>دليل مطبوع بالعربي + فيديو شرح كامل محمي داخل حسابك.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-border">
-    <div class="container">
-      <div class="sec-head">
-        <span class="sec-eyebrow">المستويات</span>
-        <h2 class="sec-title">ابدأ من أي مكان</h2>
-        <p class="sec-text">كل مستوى فيه 5 مشاريع مختلفة، من الأسهل إلى الأصعب.</p>
-      </div>
-      <div class="levels-grid">
-        <div class="level-card">
-          <div class="level-dots"><span class="on"></span><span></span><span></span></div>
-          <h3>متوسط</h3>
-          <p>حساس واحد، منطق برمجي مباشر، ونتيجة تراها في نفس اليوم.</p>
-          <span class="level-count">5 مشاريع</span>
-          <a href="projects.html?level=medium" class="btn btn-outline btn-sm" style="margin-top:8px;">تصفح المستوى</a>
-        </div>
-        <div class="level-card">
-          <div class="level-dots"><span class="on"></span><span class="on"></span><span></span></div>
-          <h3>قوي</h3>
-          <p>أنظمة متعددة تعمل معًا: حركة، استشعار، واتصال لاسلكي.</p>
-          <span class="level-count">5 مشاريع</span>
-          <a href="projects.html?level=strong" class="btn btn-outline btn-sm" style="margin-top:8px;">تصفح المستوى</a>
-        </div>
-        <div class="level-card">
-          <div class="level-dots"><span class="on"></span><span class="on"></span><span class="on"></span></div>
-          <h3>سفّاح</h3>
-          <p>تركيب دقيق، أجزاء مشغولة، ومشاريع تُبنى على أيام.</p>
-          <span class="level-count">5 مشاريع</span>
-          <a href="projects.html?level=extreme" class="btn btn-outline btn-sm" style="margin-top:8px;">تصفح المستوى</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-border" id="videos">
-    <div class="container">
-      <div class="sec-head">
-        <span class="sec-eyebrow">مكتبة الفيديوهات</span>
-        <h2 class="sec-title">فيديو شرح لكل مشروع</h2>
-        <p class="sec-text">يُفتح بعد الشراء بالبث المباشر فقط، مع علامة مائية تحمي المحتوى.</p>
-      </div>
-      <div class="video-grid" id="videoGrid"></div>
-    </div>
-  </section>
+  </div>
 </main>
 
-<footer class="site-footer" id="contact">
+<footer class="site-footer">
   <div class="container footer-inner">
     <div class="brand"><span class="brand-mark"><span class="bot-face"><span class="eye"></span><span class="eye"></span></span></span><span class="brand-text">ROBOKIT</span></div>
     <div class="footer-links">
       <a href="projects.html">الكيتات</a>
-      <a href="#videos">الفيديوهات</a>
+      <a href="videos.html">الفيديوهات</a>
       <a href="mailto:support@robokit.jo">تواصل معنا</a>
       <a href="admin.html">لوحة التحكم</a>
     </div>
@@ -191,60 +51,12 @@ section{padding-block:80px;}
 <div id="toast"></div>
 <script src="shared.js"></script>
 <script>
-let LEVELS = null;
-const DOTS = {medium:1,strong:2,extreme:3};
-
 (async function(){
   document.getElementById('headerMount').innerHTML = renderHeader('home');
   document.getElementById('cartMount').innerHTML = renderCartDrawer();
   updateCartBadge();
   await detectApi();
-  LEVELS = await loadCatalog();
-  renderFeatured();
-  renderVideos();
 })();
-
-function renderFeatured(){
-  const grid = document.getElementById('featuredGrid');
-  if(!LEVELS){grid.innerHTML='<p style="color:var(--text-faint)">تعذّر تحميل الكيتات</p>';return;}
-  const picks = [];
-  ['medium','strong','extreme'].forEach(lk=>{
-    const badge = LEVELS[lk].items.find(i=>i.badge);
-    const extra = LEVELS[lk].items.find(i=>!i.badge);
-    if(badge) picks.push({lk,item:badge});
-    if(extra) picks.push({lk,item:extra});
-  });
-  grid.innerHTML = picks.slice(0,6).map(({lk,item})=>{
-    const n=DOTS[lk];
-    const dots=[1,2,3].map(i=>`<span class="${i<=n?'on':''}"></span>`).join('');
-    return `<a href="kit.html?level=${lk}&code=${item.code}" class="featured-card">
-      ${item.badge?'<span class="fc-badge">الأكثر طلبًا</span>':''}
-      <span class="fc-code">${item.code}</span>
-      <div class="fc-title">${escHtml(item.title)}</div>
-      <div class="fc-desc">${escHtml(item.desc)}</div>
-      <div class="fc-footer">
-        <span class="fc-price">${kitTotal(item)}<small>${CURRENCY}</small></span>
-        <span class="fc-level">${dots}</span>
-      </div>
-    </a>`;
-  }).join('');
-}
-
-function renderVideos(){
-  if(!LEVELS){return;}
-  const cards=[];
-  Object.values(LEVELS).forEach(level=>level.items.forEach(item=>{
-    cards.push(`<div class="video-card">
-      <div class="video-thumb" oncontextmenu="return false">
-        <span class="wm">ROBOKIT</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-        <span>يُفتح بعد الشراء</span>
-      </div>
-      <div class="video-meta"><span class="video-code">${item.code}</span><span class="video-title">${escHtml(item.title)}</span></div>
-    </div>`);
-  }));
-  document.getElementById('videoGrid').innerHTML=cards.join('');
-}
 </script>
 </body>
 </html>

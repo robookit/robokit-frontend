@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مكتبة الفيديوهات — Robokit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+.page-head{padding-block:56px 0;border-bottom:1px solid var(--border);}
+.page-title{font-size:clamp(2rem,4vw,3rem);font-weight:900;margin-bottom:10px;}
+.page-sub{color:var(--text-muted);font-size:1rem;max-width:560px;}
+section{padding-block:48px;}
+.level-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px;}
+.level-tab{display:flex;align-items:center;gap:9px;padding:12px 22px;border:1px solid var(--border);border-radius:999px;font-weight:700;font-size:.92rem;color:var(--text-muted);transition:all .2s;cursor:pointer;}
+.level-tab .ldots{display:flex;gap:3px;}
+.level-tab .ldots span{width:6px;height:6px;border-radius:50%;background:var(--border);}
+.level-tab .ldots span.on{background:currentColor;}
+.level-tab.active{border-color:var(--orange);color:var(--orange);background:rgba(255,90,31,.07);}
+.level-tab:not(.active):hover{border-color:var(--text-faint);color:var(--text);}
+.video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px;}
+.video-card{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .2s;}
+.video-card:hover{border-color:var(--orange-dim);}
+.video-thumb{aspect-ratio:16/10;background:linear-gradient(135deg,var(--surface),#0a0a0b);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;color:var(--text-faint);user-select:none;position:relative;overflow:hidden;}
+.video-thumb .wm{position:absolute;font-size:1.7rem;font-weight:900;color:rgba(255,90,31,.045);letter-spacing:.35em;transform:rotate(-18deg);white-space:nowrap;}
+.video-thumb svg{width:24px;height:24px;position:relative;color:var(--orange);}
+.video-thumb span{font-size:.76rem;position:relative;}
+.video-meta{padding:13px 15px;}
+.video-code{font-family:var(--font-mono);font-size:.7rem;color:var(--text-faint);display:block;margin-bottom:4px;}
+.video-title{font-size:.9rem;font-weight:700;}
+.video-level{display:inline-flex;gap:3px;margin-top:8px;}
+.video-level span{width:6px;height:6px;border-radius:50%;background:var(--border);}
+.video-level span.on{background:var(--orange);}
+@media(max-width:600px){section{padding-block:36px;}}
+</style>
+</head>
+<body>
+<div id="headerMount"></div>
+
+<div class="page-head">
+  <div class="container">
+    <span style="font-family:var(--font-mono);font-size:.78rem;color:var(--orange);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:10px;">مكتبة الفيديوهات</span>
+    <h1 class="page-title">فيديو شرح لكل مشروع</h1>
+    <p class="page-sub">يُفتح كل فيديو في مكتبتك تلقائيًا بعد شراء الكيت المرتبط — بث مباشر فقط، مع علامة مائية تحمي المحتوى.</p>
+  </div>
+</div>
+
+<main>
+  <section>
+    <div class="container">
+      <div class="level-tabs" id="levelTabs">
+        <button class="level-tab active" data-level="all">الكل</button>
+        <button class="level-tab" data-level="medium">
+          <span class="ldots"><span class="on"></span><span></span><span></span></span>متوسط
+        </button>
+        <button class="level-tab" data-level="strong">
+          <span class="ldots"><span class="on"></span><span class="on"></span><span></span></span>قوي
+        </button>
+        <button class="level-tab" data-level="extreme">
+          <span class="ldots"><span class="on"></span><span class="on"></span><span class="on"></span></span>سفّاح
+        </button>
+      </div>
+      <div class="video-grid" id="videoGrid"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="brand"><span class="brand-mark"><span class="bot-face"><span class="eye"></span><span class="eye"></span></span></span><span class="brand-text">ROBOKIT</span></div>
+    <div class="footer-links">
+      <a href="index.html">الرئيسية</a>
+      <a href="projects.html">الكيتات</a>
+      <a href="admin.html">لوحة التحكم</a>
+    </div>
+    <span class="footer-copy">© 2026 Robokit</span>
+  </div>
+</footer>
+
+<div id="cartMount"></div>
+<div id="toast"></div>
+<script src="shared.js"></script>
+<script>
+let LEVELS = null;
+const DOTS = {medium:1,strong:2,extreme:3};
+let activeFilter = 'all';
+
+(async function(){
+  document.getElementById('headerMount').innerHTML = renderHeader('videos');
+  document.getElementById('cartMount').innerHTML = renderCartDrawer();
+  updateCartBadge();
+  await detectApi();
+  LEVELS = await loadCatalog();
+  renderVideos();
+})();
+
+function renderVideos(){
+  const grid = document.getElementById('videoGrid');
+  if(!LEVELS){ grid.innerHTML='<p style="color:var(--text-faint)">تعذّر تحميل الفيديوهات</p>'; return; }
+
+  const cards = [];
+  Object.entries(LEVELS).forEach(([lk, level])=>{
+    if(activeFilter!=='all' && activeFilter!==lk) return;
+    const n = DOTS[lk];
+    const dots = [1,2,3].map(i=>`<span class="${i<=n?'on':''}"></span>`).join('');
+    level.items.forEach(item=>{
+      cards.push(`
+      <div class="video-card">
+        <div class="video-thumb" oncontextmenu="return false">
+          <span class="wm">ROBOKIT</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          <span>يُفتح بعد الشراء</span>
+        </div>
+        <div class="video-meta">
+          <span class="video-code">${item.code}</span>
+          <span class="video-title">${escHtml(item.title)}</span>
+          <div class="video-level">${dots}</div>
+        </div>
+      </div>`);
+    });
+  });
+  grid.innerHTML = cards.join('') || '<p style="color:var(--text-faint)">لا توجد فيديوهات لهذا المستوى</p>';
+}
+
+document.getElementById('levelTabs').addEventListener('click', e=>{
+  const tab = e.target.closest('.level-tab');
+  if(!tab) return;
+  document.querySelectorAll('.level-tab').forEach(t=>t.classList.toggle('active', t===tab));
+  activeFilter = tab.dataset.level;
+  renderVideos();
+});
+</script>
+</body>
+</html>
