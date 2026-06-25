@@ -9,278 +9,143 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 <style>
-/* ===== Custom Cursor ===== */
-*, *::before, *::after { cursor: none !important; }
-#cursor {
-  position: fixed; z-index: 9999; pointer-events: none;
-  width: 22px; height: 22px;
-  transform: translate(-50%, -50%);
-  transition: opacity .2s;
-}
-#cursor svg { width: 100%; height: 100%; }
-.cursor-trail {
-  position: fixed; pointer-events: none; z-index: 9998;
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--orange); opacity: 0;
-  transform: translate(-50%, -50%);
-  transition: opacity .4s;
-}
-
-/* ===== Boot sequence overlay ===== */
-#boot-overlay {
-  position: fixed; inset: 0; z-index: 500;
-  background: #0b0b0c;
-  display: flex; align-items: center; justify-content: center;
-}
-.boot-terminal {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .88rem; color: var(--orange);
-  max-width: 460px; width: 90%;
-  padding: 32px;
-  border: 1px solid var(--orange-dim);
-  border-radius: var(--radius);
-}
-.boot-line {
-  display: block; opacity: 0;
-  margin-bottom: 6px; white-space: nowrap; overflow: hidden;
-}
-.boot-line.done { opacity: 1; }
-.boot-cursor { display: inline-block; width: 8px; height: 14px; background: var(--orange); animation: blink-cursor .7s infinite; vertical-align: middle; margin-inline-start: 4px; }
-@keyframes blink-cursor { 0%,49%{opacity:1} 50%,100%{opacity:0} }
-
 /* ===== Hero ===== */
-.hero {
-  position: relative; height: 100vh;
-  display: flex; align-items: center; justify-content: center;
-  overflow: hidden;
+.hero{
+  position:relative;height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
 }
-/* Glitch scanlines */
-.hero::after {
-  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 3;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.08) 2px, rgba(0,0,0,.08) 4px);
-  animation: scanlines 8s linear infinite;
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(var(--border) 1px,transparent 1px);
+  background-size:28px 28px;opacity:.35;
+  mask-image:radial-gradient(circle at 50% 50%,black 0%,transparent 72%);
 }
-@keyframes scanlines { 0%{background-position:0 0} 100%{background-position:0 100px} }
+.hero-inner{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;gap:0;
+}
+/* لوجو كبير */
+.logo-hero{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:28px;}
+.logo-robot{
+  width:90px;height:90px;border-radius:50%;background:var(--orange);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 12px rgba(255,90,31,.08), 0 0 0 24px rgba(255,90,31,.04);
+}
+.logo-robot .face{
+  width:58%;height:46%;background:var(--bg);border-radius:14px;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+}
+.logo-robot .eye{
+  width:11px;height:20px;background:var(--orange);border-radius:4px;
+  box-shadow:0 0 12px var(--orange);animation:blink 5s infinite;
+}
+.logo-robot .eye:nth-child(2){animation-delay:.12s;}
+.logo-wordmark{font-size:clamp(2.4rem,6vw,4.2rem);font-weight:900;letter-spacing:.08em;}
+.logo-wordmark span{color:var(--orange);}
 
-/* Dot grid bg */
-.hero::before {
-  content: ''; position: absolute; inset: 0;
-  background-image: radial-gradient(var(--border) 1px, transparent 1px);
-  background-size: 28px 28px; opacity: .4;
-  mask-image: radial-gradient(circle at 50% 55%, black 0%, transparent 70%);
+.hero-tagline{
+  font-size:clamp(1rem,2.2vw,1.3rem);color:var(--text-muted);
+  margin-bottom:36px;max-width:480px;
 }
-
-/* Time-based glow (JS sets class) */
-.hero.night-mode { background: #060608; }
-.hero.night-mode::before { opacity: .6; }
-
-/* ===== Glitch text overlay ===== */
-#glitch-overlay {
-  position: absolute; inset: 0; z-index: 4; pointer-events: none;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: clamp(3rem, 8vw, 6rem);
-  font-weight: 900; color: var(--orange);
-  opacity: 0; letter-spacing: .05em;
-  text-shadow: 2px 0 #ff003c, -2px 0 #00fff9;
-}
-
-/* ===== Scene ===== */
-.scene {
-  position: relative; width: 340px; height: 340px;
-  perspective: 1000px; z-index: 2;
-}
-
-/* time badge */
-#time-badge {
-  position: absolute; top: -36px; left: 50%; transform: translateX(-50%);
-  font-family: 'JetBrains Mono', monospace; font-size: .72rem;
-  color: var(--text-faint); white-space: nowrap; opacity: 0;
-  transition: opacity .5s;
-}
-
-.box-base {
-  position: absolute; bottom: 36px; left: 50%; width: 220px; height: 110px;
-  transform: translateX(-50%);
-  background: linear-gradient(155deg, #1b1a18 0%, #15130f 100%);
-  border: 1.5px solid #2e2a24; border-radius: 6px;
-  box-shadow: 0 30px 60px rgba(0,0,0,.5);
-}
-.box-base::before {
-  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  width: 64%; height: 5px; background: var(--orange); border-radius: 0 0 3px 3px;
-}
-.box-base::after {
-  content: 'ROBOKIT'; position: absolute; bottom: 13px; left: 50%; transform: translateX(-50%);
-  font-family: 'JetBrains Mono', monospace; font-size: .78rem; letter-spacing: .3em; color: var(--text-faint);
-}
-
-.box-lid {
-  position: absolute; bottom: 144px; left: 50%;
-  width: 220px; height: 120px; margin-left: -110px;
-  transform-origin: bottom center;
-  background: linear-gradient(155deg, #211f1a 0%, #1b1a18 100%);
-  border: 1.5px solid #2e2a24; border-bottom: none; border-radius: 6px 6px 0 0;
-  transform: rotateX(0deg); transform-style: preserve-3d;
-}
-.box-lid::before { content: ''; position: absolute; inset: 13px; border: 1px dashed #3a352c; border-radius: 3px; }
-.lid-mark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-.lid-bot { width: 46px; height: 46px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; }
-.lid-bot-inner { width: 58%; height: 46%; background: #1b1a18; border-radius: 6px; display: flex; align-items: center; justify-content: center; gap: 5px; }
-.lid-eye { width: 5px; height: 9px; background: var(--orange); border-radius: 2px; }
-
-.box-glow {
-  position: absolute; bottom: 44px; left: 50%; transform: translateX(-50%);
-  width: 190px; height: 95px; border-radius: 6px;
-  background: radial-gradient(ellipse at 50% 30%, rgba(255,90,31,.38), transparent 70%);
-  opacity: 0;
-}
-.beam {
-  position: absolute; bottom: 142px; left: 50%; transform: translateX(-50%);
-  width: 4px; height: 0;
-  background: linear-gradient(to top, var(--orange), transparent);
-  opacity: 0;
-}
-.kit-rising {
-  position: absolute; bottom: 50px; left: 50%;
-  transform: translateX(-50%) translateY(22px) scale(.9);
-  width: 190px; background: #1e1e22;
-  border: 1.5px solid var(--orange-dim); border-radius: 10px;
-  padding: 13px 15px; opacity: 0;
-  box-shadow: 0 0 28px rgba(255,90,31,.18), 0 18px 40px rgba(0,0,0,.5);
-}
-.kr-code { font-family: 'JetBrains Mono', monospace; font-size: .7rem; color: var(--text-faint); display: block; margin-bottom: 5px; }
-.kr-title { font-size: .88rem; font-weight: 800; margin-bottom: 4px; }
-.kr-price { font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 700; color: var(--orange); }
-
-/* mouse-tracking aura */
-#aura {
-  position: fixed; pointer-events: none; z-index: 1;
-  width: 320px; height: 320px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,90,31,.07) 0%, transparent 70%);
-  transform: translate(-50%,-50%);
-  transition: left .12s, top .12s;
-}
-
-/* Level indicator (mouse X) */
-#level-indicator {
-  position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
-  font-family: 'JetBrains Mono', monospace; font-size: .72rem;
-  color: var(--text-faint); z-index: 5; letter-spacing: .1em;
-  transition: color .4s;
-}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:52px;}
+.hero-stats{display:flex;gap:40px;flex-wrap:wrap;justify-content:center;}
+.hero-stat strong{display:block;font-family:'JetBrains Mono',monospace;font-size:1.6rem;color:var(--orange);margin-bottom:2px;}
+.hero-stat span{font-size:.8rem;color:var(--text-muted);}
 
 /* ===== يلا نهندس ===== */
-.lets-build {
-  padding-block: 70px; text-align: center; border-top: 1px solid var(--border);
-  position: relative; overflow: hidden;
+.lets-build{
+  padding-block:70px;text-align:center;border-top:1px solid var(--border);
 }
-.lets-build-text {
-  font-size: clamp(2.6rem, 6vw, 5.2rem); font-weight: 900; line-height: 1.1;
-  position: relative; display: inline-block;
+.lets-build-text{font-size:clamp(2.4rem,6vw,5rem);font-weight:900;line-height:1.1;}
+.lets-build-text span{color:var(--orange);}
+.lets-build-sub{
+  display:block;font-family:'JetBrains Mono',monospace;
+  font-size:.82rem;color:var(--text-faint);letter-spacing:.1em;margin-top:12px;
 }
-.lets-build-text span { color: var(--orange); }
-.lets-build-sub {
-  display: block; font-family: 'JetBrains Mono', monospace;
-  font-size: .82rem; color: var(--text-faint); letter-spacing: .1em; margin-top: 12px;
+/* Counter */
+.live-counter{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'JetBrains Mono',monospace;font-size:.78rem;
+  color:var(--text-muted);margin-top:18px;
 }
-
-/* ===== Counter ===== */
-.live-counter {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-family: 'JetBrains Mono', monospace; font-size: .78rem;
-  color: var(--text-muted); margin-top: 18px;
-}
-.counter-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 6px #22c55e; animation: pulse-dot 2s infinite; }
-@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(.8)} }
+.counter-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;animation:pulse-dot 2s infinite;}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.8)}}
 
 /* ===== Random kits ===== */
-.random-kits { padding-block: 0 70px; border-bottom: 1px solid var(--border); }
-.random-grid {
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
-  max-width: 680px; margin-inline: auto;
+.random-kits{padding-block:0 70px;border-bottom:1px solid var(--border);}
+.random-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:20px;
+  max-width:680px;margin-inline:auto;
 }
-.kit-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 26px; display: flex; flex-direction: column; gap: 12px;
-  transition: border-color .2s, transform .2s; position: relative; overflow: hidden;
-  text-decoration: none; color: inherit;
+.kit-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;display:flex;flex-direction:column;
+  transition:border-color .2s,transform .2s;text-decoration:none;color:inherit;position:relative;
 }
-.kit-card:hover { border-color: var(--orange-dim); transform: translateY(-3px); }
-.kit-card::before {
-  content: ''; position: absolute; top: 0; right: 0; left: 0; height: 2px;
-  background: var(--orange); transform: scaleX(0); transform-origin: right; transition: transform .3s;
+.kit-card:hover{border-color:var(--orange-dim);transform:translateY(-3px);}
+.kit-card::before{
+  content:'';position:absolute;top:0;right:0;left:0;height:2px;
+  background:var(--orange);transform:scaleX(0);transform-origin:right;transition:transform .3s;
 }
-.kit-card:hover::before { transform: scaleX(1); }
-.kit-code { font-family: 'JetBrains Mono', monospace; font-size: .75rem; color: var(--text-faint); }
-.kit-lvl { display: flex; gap: 4px; }
-.kit-lvl span { width: 7px; height: 7px; border-radius: 50%; background: var(--border); }
-.kit-lvl span.on { background: var(--orange); box-shadow: 0 0 5px var(--orange); }
-.kit-title { font-size: 1.05rem; font-weight: 800; }
-.kit-desc { font-size: .86rem; color: var(--text-muted); flex-grow: 1; }
-.kit-price { font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; color: var(--orange); }
-.kit-price small { font-size: .75rem; color: var(--text-muted); font-weight: 400; margin-inline-start: 4px; }
-.kit-card-top { display: flex; align-items: center; justify-content: space-between; }
+.kit-card:hover::before{transform:scaleX(1);}
+.kit-img{
+  aspect-ratio:16/9;background:var(--surface-2);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.kit-img img{width:100%;height:100%;object-fit:cover;}
+.kit-img .no-img{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:var(--text-faint);font-size:.76rem;font-family:'JetBrains Mono',monospace;
+}
+.kit-img .no-img svg{width:28px;height:28px;}
+.kit-body{padding:20px;}
+.kit-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.kit-code{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--text-faint);}
+.kit-lvl{display:flex;gap:4px;}
+.kit-lvl span{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.kit-lvl span.on{background:var(--orange);box-shadow:0 0 5px var(--orange);}
+.kit-title{font-size:1.05rem;font-weight:800;margin-bottom:6px;}
+.kit-desc{font-size:.86rem;color:var(--text-muted);flex-grow:1;margin-bottom:12px;}
+.kit-price{font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--orange);}
+.kit-price small{font-size:.75rem;color:var(--text-muted);font-weight:400;margin-inline-start:4px;}
 
 /* ===== CTA ===== */
-.all-kits { padding-block: 60px; text-align: center; border-bottom: 1px solid var(--border); }
-.all-kits p { color: var(--text-muted); font-size: .96rem; margin-bottom: 22px; }
+.all-kits{padding-block:60px;text-align:center;border-bottom:1px solid var(--border);}
+.all-kits p{color:var(--text-muted);font-size:.96rem;margin-bottom:22px;}
 
-@media(max-width:600px) {
-  .random-grid { grid-template-columns: 1fr; max-width: 340px; }
-  .lets-build { padding-block: 50px; }
+@media(max-width:600px){
+  .random-grid{grid-template-columns:1fr;max-width:340px;}
+  .lets-build{padding-block:50px;}
+  .logo-hero{gap:12px;}
 }
 </style>
 </head>
 <body>
 
-<!-- Custom cursor -->
-<div id="cursor">
-  <svg viewBox="0 0 24 24" fill="none">
-    <!-- Soldering iron icon -->
-    <line x1="3" y1="21" x2="14" y2="10" stroke="#ff5a1f" stroke-width="2.2" stroke-linecap="round"/>
-    <path d="M14 10 L18 6 L20 4 L20 8 L18 10 Z" fill="#ff5a1f"/>
-    <circle cx="3.5" cy="20.5" r="1.5" fill="#ff7240" opacity=".7"/>
-  </svg>
-</div>
-<div id="aura"></div>
-
-<!-- Boot overlay -->
-<div id="boot-overlay">
-  <div class="boot-terminal">
-    <span class="boot-line" id="bl1">› تهيئة Robokit OS v2.6...</span>
-    <span class="boot-line" id="bl2">✓ تحميل الكتالوج — 15 مشروع</span>
-    <span class="boot-line" id="bl3">✓ فحص القطع... كاملة</span>
-    <span class="boot-line" id="bl4">✓ تحميل الفيديوهات... محمية</span>
-    <span class="boot-line" id="bl5" style="color:var(--text-muted)">────────────────────────</span>
-    <span class="boot-line" id="bl6" style="color:#f4f3ef;font-weight:700">النظام جاهز. يلا نهندس<span class="boot-cursor"></span></span>
-  </div>
-</div>
-
 <div id="headerMount"></div>
 
 <!-- Hero -->
-<section class="hero" id="heroSection">
-  <div id="glitch-overlay">ROBOKIT</div>
-
-  <div class="scene">
-    <span id="time-badge"></span>
-    <div class="beam" id="beam"></div>
-    <div class="box-glow" id="boxGlow"></div>
-    <div class="kit-rising" id="kitRising">
-      <span class="kr-code" id="risingCode"></span>
-      <div class="kr-title" id="risingTitle"></div>
-      <div class="kr-price" id="risingPrice"></div>
-    </div>
-    <div class="box-lid" id="boxLid">
-      <div class="lid-mark">
-        <div class="lid-bot"><div class="lid-bot-inner"><span class="lid-eye"></span><span class="lid-eye"></span></div></div>
+<section class="hero">
+  <div class="hero-inner">
+    <div class="logo-hero">
+      <div class="logo-robot">
+        <div class="face"><span class="eye"></span><span class="eye"></span></div>
       </div>
+      <span class="logo-wordmark">ROBO<span>KIT</span></span>
     </div>
-    <div class="box-base" id="boxBase"></div>
+    <p class="hero-tagline">كيتات أردوينو هندسية كاملة — القطع، الدليل، والفيديو في صندوق واحد.</p>
+    <div class="hero-actions">
+      <a href="projects.html" class="btn btn-primary">اكتشف الكيتات</a>
+      <a href="about.html" class="btn btn-outline">من نحن</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong>15</strong><span>مشروعًا جاهزًا</span></div>
+      <div class="hero-stat"><strong>3</strong><span>مستويات صعوبة</span></div>
+      <div class="hero-stat"><strong>100%</strong><span>كيت متكامل</span></div>
+    </div>
   </div>
-
-  <div id="level-indicator">متوسط</div>
 </section>
 
 <!-- يلا نهندس -->
@@ -318,7 +183,8 @@
     <div class="footer-links">
       <a href="projects.html">الكيتات</a>
       <a href="videos.html">الفيديوهات</a>
-      <a href="mailto:support@robokit.jo">تواصل معنا</a>
+      <a href="community.html">مجتمع روبو</a>
+      <a href="about.html">من نحن</a>
       <a href="admin.html">لوحة التحكم</a>
     </div>
     <span class="footer-copy">© 2026 Robokit</span>
@@ -332,166 +198,16 @@
 const DOTS = {medium:1,strong:2,extreme:3};
 let LEVELS = null;
 
-/* ===== Custom cursor ===== */
-const cursorEl = document.getElementById('cursor');
-const auraEl   = document.getElementById('aura');
-const trails   = [];
-const TRAIL_COUNT = 7;
-for(let i=0;i<TRAIL_COUNT;i++){
-  const d=document.createElement('div');
-  d.className='cursor-trail';
-  document.body.appendChild(d);
-  trails.push({el:d,x:0,y:0});
-}
-let mx=window.innerWidth/2, my=window.innerHeight/2;
-document.addEventListener('mousemove',e=>{
-  mx=e.clientX; my=e.clientY;
-  cursorEl.style.left=mx+'px'; cursorEl.style.top=my+'px';
-  auraEl.style.left=mx+'px'; auraEl.style.top=my+'px';
-  updateLevelIndicator(mx);
-});
-document.body.addEventListener('mouseenter',()=>{ cursorEl.style.opacity='1'; });
-document.body.addEventListener('mouseleave',()=>{ cursorEl.style.opacity='0'; });
-
-(function trailLoop(){
-  let px=mx,py=my;
-  trails.forEach((t,i)=>{
-    const delay=i*2;
-    setTimeout(()=>{
-      t.el.style.left=px+'px';
-      t.el.style.top=py+'px';
-      t.el.style.opacity=String((TRAIL_COUNT-i)/(TRAIL_COUNT*2));
-      setTimeout(()=>{ t.el.style.opacity='0'; },200+i*30);
-    },delay);
-  });
-  requestAnimationFrame(trailLoop);
-})();
-
-/* ===== Level indicator from mouse X ===== */
-const levelNames = ['متوسط','متوسط','قوي','قوي','سفّاح','سفّاح'];
-const levelColors = ['#9a9aa1','#9a9aa1','#ff7240','#ff7240','#ff5a1f','#ff5a1f'];
-const levelInd = document.getElementById('level-indicator');
-function updateLevelIndicator(x){
-  const idx = Math.min(5, Math.floor((x/window.innerWidth)*6));
-  levelInd.textContent = 'مستواك الآن: '+levelNames[idx];
-  levelInd.style.color = levelColors[idx];
-}
-
-/* ===== Time awareness ===== */
-function setupTimeMode(){
-  const h = new Date().getHours();
-  const badge = document.getElementById('time-badge');
-  const hero = document.getElementById('heroSection');
-  if(h>=0 && h<5){
-    hero.classList.add('night-mode');
-    badge.textContent = '🦉 ليش صاحي على هاد الوقت؟ الـ solder ما بينام';
-    badge.style.opacity='1';
-  } else if(h>=22){
-    hero.classList.add('night-mode');
-    badge.textContent = '🌙 وضع المهوسين — ليلي';
-    badge.style.opacity='1';
-  } else if(h>=6&&h<12){
-    badge.textContent = '☀️ صباح الهندسة';
-    badge.style.opacity='1';
-  }
-}
-
-/* ===== Live counter (simulated realistic) ===== */
 function startCounter(){
-  const base = 4;
-  const counterText = document.getElementById('counterText');
+  const el = document.getElementById('counterText');
   function update(){
-    const n = base + Math.floor(Math.sin(Date.now()/8000)*2 + Math.random()*1.5);
-    counterText.textContent = n+' أشخاص يتصفحون هلأ';
+    const n = 4 + Math.floor(Math.sin(Date.now()/8000)*2 + Math.random()*1.5);
+    el.textContent = n+' أشخاص يتصفحون هلأ';
     setTimeout(update, 4000+Math.random()*3000);
   }
   update();
 }
 
-/* ===== Boot sequence ===== */
-function runBoot(onDone){
-  const lines=[
-    {id:'bl1',delay:200},
-    {id:'bl2',delay:600},
-    {id:'bl3',delay:1050},
-    {id:'bl4',delay:1450},
-    {id:'bl5',delay:1750},
-    {id:'bl6',delay:2100},
-  ];
-  lines.forEach(({id,delay})=>{
-    setTimeout(()=>{ document.getElementById(id).classList.add('done'); },delay);
-  });
-  setTimeout(()=>{
-    const overlay=document.getElementById('boot-overlay');
-    overlay.style.transition='opacity 600ms ease';
-    overlay.style.opacity='0';
-    setTimeout(()=>{ overlay.style.display='none'; onDone(); },650);
-  },2900);
-}
-
-/* ===== Glitch burst ===== */
-function triggerGlitch(){
-  const g = document.getElementById('glitch-overlay');
-  g.style.opacity='1';
-  g.style.transition='none';
-  setTimeout(()=>{
-    g.style.transition='opacity 300ms ease';
-    g.style.opacity='0';
-  },120);
-}
-
-/* ===== Box animation loop ===== */
-const boxLid    = document.getElementById('boxLid');
-const boxBase   = document.getElementById('boxBase');
-const boxGlow   = document.getElementById('boxGlow');
-const beam      = document.getElementById('beam');
-const kitRising = document.getElementById('kitRising');
-
-function pickRandom(){
-  if(!LEVELS) return null;
-  const all=[];
-  Object.entries(LEVELS).forEach(([lk,level])=>level.items.forEach(item=>all.push({lk,item})));
-  return all[Math.floor(Math.random()*all.length)];
-}
-
-function runAnimation(pick){
-  if(pick){
-    document.getElementById('risingCode').textContent  = pick.item.code;
-    document.getElementById('risingTitle').textContent = pick.item.title;
-    document.getElementById('risingPrice').textContent = kitTotal(pick.item)+' '+CURRENCY;
-  }
-  boxLid.style.transition='none'; boxLid.style.transform='rotateX(0deg)'; boxLid.style.opacity='1';
-  boxBase.style.transition='none'; boxBase.style.opacity='1';
-  boxGlow.style.transition='none'; boxGlow.style.opacity='0';
-  beam.style.transition='none'; beam.style.height='0'; beam.style.opacity='0';
-  kitRising.style.transition='none'; kitRising.style.opacity='0';
-  kitRising.style.transform='translateX(-50%) translateY(22px) scale(.9)';
-  void boxLid.offsetWidth;
-
-  requestAnimationFrame(()=>{
-    boxLid.style.transition='transform 1600ms cubic-bezier(.2,.8,.2,1)';
-    boxLid.style.transform='rotateX(-125deg)';
-    boxGlow.style.transition='opacity 900ms ease 800ms';
-    boxGlow.style.opacity='.9';
-    beam.style.transition='height 800ms ease 900ms, opacity 400ms ease 1700ms';
-    beam.style.height='220px'; beam.style.opacity='1';
-    setTimeout(()=>{ beam.style.opacity='0'; },1800);
-    setTimeout(()=>{
-      kitRising.style.transition='opacity 700ms ease, transform 800ms cubic-bezier(.34,1.56,.64,1)';
-      kitRising.style.opacity='1';
-      kitRising.style.transform='translateX(-50%) translateY(-30px) scale(1)';
-      triggerGlitch();
-    },1200);
-    setTimeout(()=>{
-      [boxLid,boxBase,boxGlow,kitRising].forEach(el=>{
-        el.style.transition='opacity 700ms ease'; el.style.opacity='0';
-      });
-      setTimeout(()=>{ runAnimation(pickRandom()); },1000);
-    },3800);
-  });
-}
-
-/* ===== Random kits grid ===== */
 function renderRandomKits(){
   if(!LEVELS) return;
   const all=[];
@@ -500,29 +216,32 @@ function renderRandomKits(){
   document.getElementById('randomGrid').innerHTML = picks.map(({lk,item})=>{
     const n=DOTS[lk];
     const dots=[1,2,3].map(i=>`<span class="${i<=n?'on':''}"></span>`).join('');
+    const imgHtml = item.image
+      ? `<img src="${item.image}" alt="${escHtml(item.title)}" loading="lazy">`
+      : `<div class="no-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>${item.code}</span></div>`;
     return `<a href="kit.html?level=${lk}&code=${item.code}" class="kit-card">
-      <div class="kit-card-top">
-        <span class="kit-code">${item.code}</span>
-        <span class="kit-lvl">${dots}</span>
+      <div class="kit-img">${imgHtml}</div>
+      <div class="kit-body">
+        <div class="kit-card-top">
+          <span class="kit-code">${item.code}</span>
+          <span class="kit-lvl">${dots}</span>
+        </div>
+        <div class="kit-title">${escHtml(item.title)}</div>
+        <div class="kit-desc">${escHtml(item.desc)}</div>
+        <div class="kit-price">${kitTotal(item)}<small>${CURRENCY}</small></div>
       </div>
-      <div class="kit-title">${escHtml(item.title)}</div>
-      <div class="kit-desc">${escHtml(item.desc)}</div>
-      <div class="kit-price">${kitTotal(item)}<small>${CURRENCY}</small></div>
     </a>`;
   }).join('');
 }
 
-/* ===== Init ===== */
 (async function(){
   document.getElementById('headerMount').innerHTML = renderHeader('home');
   document.getElementById('cartMount').innerHTML = renderCartDrawer();
   updateCartBadge();
-  setupTimeMode();
   startCounter();
   await detectApi();
   LEVELS = await loadCatalog();
   renderRandomKits();
-  runBoot(()=>{ runAnimation(pickRandom()); });
 })();
 </script>
 </body>

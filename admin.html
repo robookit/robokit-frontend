@@ -262,6 +262,18 @@ function renderEditor(lk){
       </div>
       <div class="field"><label>عنوان المشروع</label><input type="text" class="f-title" value="${escHtml(item.title)}"></div>
       <div class="field"><label>الوصف</label><textarea class="f-desc">${escHtml(item.desc)}</textarea></div>
+      <div class="field">
+        <label>صورة الكيت</label>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          ${item.image ? `<img src="${item.image}" style="width:80px;height:54px;object-fit:cover;border-radius:6px;border:1px solid var(--border);">` : ''}
+          <label style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:.84rem;color:var(--text-muted);transition:all .2s;" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            رفع صورة
+            <input type="file" accept="image/*" class="f-image" style="display:none;">
+          </label>
+          ${item.image ? `<button type="button" class="f-image-clear btn btn-outline btn-sm" style="padding:8px 12px;">حذف الصورة</button>` : ''}
+        </div>
+      </div>
       <div class="field"><label>القطع</label>
         <div class="parts-edit">
           ${item.parts.map((p,pi)=>`
@@ -300,6 +312,17 @@ document.getElementById('catalogEditor').addEventListener('change',e=>{
   const item=LEVELS[ke.dataset.level].items[Number(ke.dataset.idx)];
   if(t.classList.contains('f-badge')) item.badge=t.checked;
   else if(t.classList.contains('f-pcore')) item.parts[Number(t.closest('.part-edit-row').dataset.pi)].core=t.checked;
+  else if(t.classList.contains('f-image') && t.files && t.files[0]){
+    const file=t.files[0];
+    if(file.size > 2*1024*1024){ showToast('حجم الصورة يجب أن يكون أقل من 2MB'); return; }
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      item.image=ev.target.result;
+      renderEditor(ke.dataset.level);
+      showToast('تم رفع الصورة — لا تنس الضغط على "حفظ ونشر"');
+    };
+    reader.readAsDataURL(file);
+  }
 });
 document.getElementById('catalogEditor').addEventListener('click',e=>{
   const rm=e.target.closest('.rm-part');
@@ -314,7 +337,14 @@ document.getElementById('catalogEditor').addEventListener('click',e=>{
   if(add){
     const ke=add.closest('.kit-edit');
     LEVELS[ke.dataset.level].items[Number(ke.dataset.idx)].parts.push({name:'قطعة جديدة',price:0,core:false});
+    renderEditor(ke.dataset.level); return;
+  }
+  const clearImg=e.target.closest('.f-image-clear');
+  if(clearImg){
+    const ke=clearImg.closest('.kit-edit');
+    delete LEVELS[ke.dataset.level].items[Number(ke.dataset.idx)].image;
     renderEditor(ke.dataset.level);
+    showToast('تم حذف الصورة');
   }
 });
 

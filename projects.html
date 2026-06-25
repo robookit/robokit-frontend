@@ -23,17 +23,22 @@ section{padding-block:48px;}
 .level-tagline{color:var(--text-muted);font-size:.95rem;margin-bottom:32px;max-width:640px;}
 .kits-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;}
 .kits-grid[hidden]{display:none;}
-.kit-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px;display:flex;flex-direction:column;gap:12px;transition:border-color .2s,transform .2s;position:relative;}
+.kit-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:border-color .2s,transform .2s;position:relative;}
 .kit-card:hover{border-color:var(--orange-dim);transform:translateY(-3px);}
+.kit-img{aspect-ratio:16/9;background:var(--surface-2);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.kit-img img{width:100%;height:100%;object-fit:cover;}
+.kit-img .no-img{display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--text-faint);font-size:.72rem;font-family:var(--font-mono);}
+.kit-img .no-img svg{width:22px;height:22px;}
+.kit-body{padding:20px;display:flex;flex-direction:column;gap:10px;flex-grow:1;}
 .kit-card-top{display:flex;align-items:center;justify-content:space-between;}
 .kit-code{font-family:var(--font-mono);font-size:.75rem;color:var(--text-faint);}
 .kit-lvl{display:flex;gap:4px;}
 .kit-lvl span{width:7px;height:7px;border-radius:50%;background:var(--border);}
 .kit-lvl span.on{background:var(--orange);box-shadow:0 0 5px var(--orange);}
-.kit-badge{position:absolute;top:-11px;inset-inline-start:20px;background:var(--orange);color:#110d0a;font-size:.7rem;font-weight:800;padding:4px 12px;border-radius:999px;}
-.kit-title{font-size:1.1rem;font-weight:800;}
-.kit-desc{font-size:.88rem;color:var(--text-muted);flex-grow:1;}
-.kit-price{font-family:var(--font-mono);font-size:1.35rem;font-weight:700;color:var(--orange);}
+.kit-badge{position:absolute;top:8px;inset-inline-start:10px;background:var(--orange);color:#110d0a;font-size:.7rem;font-weight:800;padding:4px 12px;border-radius:999px;}
+.kit-title{font-size:1.05rem;font-weight:800;}
+.kit-desc{font-size:.86rem;color:var(--text-muted);flex-grow:1;}
+.kit-price{font-family:var(--font-mono);font-size:1.25rem;font-weight:700;color:var(--orange);}
 .kit-price small{font-size:.78rem;color:var(--text-muted);font-weight:400;margin-inline-start:4px;}
 .kit-btn{width:100%;}
 @media(max-width:600px){section{padding-block:36px;}}
@@ -115,17 +120,23 @@ function renderAllGrids(){
     const n = DOTS[lk];
     grid.innerHTML = LEVELS[lk].items.map(item=>{
       const dots=[1,2,3].map(i=>`<span class="${i<=n?'on':''}"></span>`).join('');
+      const imgHtml = item.image
+        ? `<img src="${item.image}" alt="${escHtml(item.title)}" loading="lazy">`
+        : `<div class="no-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>${item.code}</span></div>`;
       return `
       <article class="kit-card">
         ${item.badge?`<span class="kit-badge">الأكثر طلبًا</span>`:''}
-        <div class="kit-card-top">
-          <span class="kit-code">${item.code}</span>
-          <span class="kit-lvl">${dots}</span>
+        <div class="kit-img">${imgHtml}</div>
+        <div class="kit-body">
+          <div class="kit-card-top">
+            <span class="kit-code">${item.code}</span>
+            <span class="kit-lvl">${dots}</span>
+          </div>
+          <h3 class="kit-title">${escHtml(item.title)}</h3>
+          <p class="kit-desc">${escHtml(item.desc)}</p>
+          <div class="kit-price">${kitTotal(item)}<small>${CURRENCY}</small></div>
+          <a href="kit.html?level=${lk}&code=${item.code}" class="btn btn-primary kit-btn">التفاصيل والشراء</a>
         </div>
-        <h3 class="kit-title">${escHtml(item.title)}</h3>
-        <p class="kit-desc">${escHtml(item.desc)}</p>
-        <div class="kit-price">${kitTotal(item)}<small>${CURRENCY}</small></div>
-        <a href="kit.html?level=${lk}&code=${item.code}" class="btn btn-primary kit-btn">التفاصيل والشراء</a>
       </article>`;
     }).join('');
   });

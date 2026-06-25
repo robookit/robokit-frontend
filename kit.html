@@ -71,6 +71,9 @@
     <div id="kitLayout" class="kit-layout" hidden>
       <!-- Left -->
       <div class="kit-info">
+        <div id="kitImageWrap" style="border-radius:var(--radius);overflow:hidden;margin-bottom:24px;background:var(--surface-2);border:1px solid var(--border);aspect-ratio:16/9;display:none;align-items:center;justify-content:center;">
+          <img id="kitImage" style="width:100%;height:100%;object-fit:cover;" alt="">
+        </div>
         <div class="kit-meta">
           <span class="kit-code" id="kitCode"></span>
           <span class="kit-level-badge" id="kitLevel"></span>
@@ -174,6 +177,14 @@ let currentLevel = null;
   document.getElementById('kitTitle').textContent = item.title;
   document.getElementById('kitDesc').textContent = item.desc;
   document.getElementById('videoTitle').textContent = 'فيديو شرح — ' + item.title;
+
+  if(item.image){
+    const wrap = document.getElementById('kitImageWrap');
+    const img  = document.getElementById('kitImage');
+    img.src = item.image;
+    img.alt = item.title;
+    wrap.style.display = 'flex';
+  }
 
   renderParts();
 

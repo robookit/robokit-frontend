@@ -83,7 +83,7 @@
   <div class="container">
     <span class="page-eyebrow">مجتمع روبو</span>
     <h1 class="page-title">انضم للمجتمع</h1>
-    <p class="page-sub">سواء كنت تبحث عن الانضمام لفريق Robokit أو مجتمع المهندسين — اختر وابدأ.</p>
+    <p class="page-sub">سواء كنت تبحث عن الانضمام لـ Find Team أو مجتمع المهندسين — اختر وابدأ.</p>
   </div>
 </div>
 
@@ -96,7 +96,7 @@
           <div class="type-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
-          <h3>فريق Robokit</h3>
+          <h3>Find Team</h3>
           <p>انضم لفريق العمل وكن جزءاً من بناء المشروع.</p>
           <div class="type-check">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
@@ -126,10 +126,10 @@
         <div id="success-team" class="success-msg">
           <div class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
           <h3>تم استلام طلبك!</h3>
-          <p>شكراً لاهتمامك بالانضمام لفريق Robokit — سنتواصل معك قريباً.</p>
+          <p>شكراً لاهتمامك بالانضمام لFind Team — سنتواصل معك قريباً.</p>
         </div>
         <div id="form-team-inner">
-          <h2 class="form-title">الانضمام لفريق Robokit</h2>
+          <h2 class="form-title">الانضمام لFind Team</h2>
           <p class="form-sub">أدخل بياناتك وسنتواصل معك في أقرب وقت.</p>
           <div class="field"><label>الاسم الكامل <span>*</span></label><input type="text" id="t-name" placeholder="مثال: محمد أحمد"></div>
           <div class="field"><label>رقم الهاتف <span>*</span></label><input type="tel" id="t-phone" placeholder="07xxxxxxxx"></div>
@@ -245,7 +245,7 @@ async function submitForm(type){
   const entry = {
     id: 'CM-'+Date.now().toString(36).toUpperCase(),
     date: new Date().toISOString(),
-    type: type==='team' ? 'فريق Robokit' : 'مجتمع روبو',
+    type: type==='team' ? 'Find Team' : 'مجتمع روبو',
     name, phone, city, level, gender
   };
 
