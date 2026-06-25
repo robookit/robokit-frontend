@@ -88,6 +88,7 @@ body{min-height:100vh;}
   <div class="admin-tabs">
     <button class="admin-tab active" data-tab="orders">الطلبات</button>
     <button class="admin-tab" data-tab="catalog">الكيتات والأسعار</button>
+    <button class="admin-tab" data-tab="community">المجتمع</button>
   </div>
   <div class="admin-content">
     <section id="ordersPanel">
@@ -108,6 +109,10 @@ body{min-height:100vh;}
         <button class="cat-level-tab" data-level="extreme">سفّاح</button>
       </div>
       <div id="catalogEditor"></div>
+    </section>
+    <section id="communityPanel" hidden>
+      <div class="panel-toolbar"><h2>طلبات المجتمع</h2><span id="communityCount" style="color:var(--text-muted);font-size:.9rem;"></span></div>
+      <div id="communityList"></div>
     </section>
   </div>
 </div>
@@ -147,11 +152,43 @@ document.getElementById('logoutBtn').addEventListener('click', ()=>{ isAuthed=fa
 document.querySelectorAll('.admin-tab').forEach(t=>t.addEventListener('click',()=>{
   document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));
   t.classList.add('active');
-  document.getElementById('ordersPanel').hidden = t.dataset.tab!=='orders';
-  document.getElementById('catalogPanel').hidden = t.dataset.tab!=='catalog';
-  if(t.dataset.tab==='orders') showOrders();
-  if(t.dataset.tab==='catalog') showCatalog('medium');
+  document.getElementById('ordersPanel').hidden   = t.dataset.tab!=='orders';
+  document.getElementById('catalogPanel').hidden  = t.dataset.tab!=='catalog';
+  document.getElementById('communityPanel').hidden= t.dataset.tab!=='community';
+  if(t.dataset.tab==='orders')    showOrders();
+  if(t.dataset.tab==='catalog')   showCatalog('medium');
+  if(t.dataset.tab==='community') showCommunity();
 }));
+
+// ---- Community ----
+async function storageGetCommunity(){
+  try{ const r=await window.storage?.get('community_requests',true); return r?.value?JSON.parse(r.value):[]; }catch(e){return[];}
+}
+
+async function showCommunity(){
+  const list = await storageGetCommunity();
+  const el = document.getElementById('communityList');
+  document.getElementById('communityCount').textContent = list.length ? list.length+' طلب' : '';
+  if(!list.length){
+    el.innerHTML='<div class="orders-empty">لا توجد طلبات مجتمع حتى الآن.</div>';
+    return;
+  }
+  const sorted = [...list].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  el.innerHTML = sorted.map(r=>`
+    <div class="order-card">
+      <div class="order-head">
+        <div><span class="order-id">${r.id}</span> <span class="order-date">${new Date(r.date).toLocaleString('ar-JO')}</span></div>
+        <span style="font-family:monospace;font-size:.78rem;padding:4px 12px;border-radius:999px;background:rgba(255,90,31,.1);color:var(--orange);">${escHtml(r.type)}</span>
+      </div>
+      <div class="order-customer">
+        <span><b>${escHtml(r.name)}</b></span>
+        <span>${escHtml(r.phone)}</span>
+        <span>${escHtml(r.city)}</span>
+        <span>المستوى: ${escHtml(r.level)}</span>
+        <span>${escHtml(r.gender)}</span>
+      </div>
+    </div>`).join('');
+}
 
 // ---- Orders ----
 async function showOrders(){

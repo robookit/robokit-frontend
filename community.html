@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مجتمع روبو — Robokit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+.page-head{padding-block:60px 0;border-bottom:1px solid var(--border);}
+.page-eyebrow{display:block;font-family:'JetBrains Mono',monospace;color:var(--orange);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;}
+.page-title{font-size:clamp(2rem,4vw,3rem);font-weight:900;margin-bottom:10px;}
+.page-sub{color:var(--text-muted);font-size:1rem;max-width:560px;}
+
+/* ===== Type selector ===== */
+.type-section{padding-block:48px 0;}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:40px;}
+.type-card{
+  border:2px solid var(--border);border-radius:var(--radius);padding:28px;
+  cursor:pointer;transition:all .2s;text-align:center;
+}
+.type-card:hover{border-color:var(--orange-dim);}
+.type-card.selected{border-color:var(--orange);background:rgba(255,90,31,.05);}
+.type-icon{
+  width:56px;height:56px;border-radius:var(--radius);background:rgba(255,90,31,.1);
+  display:flex;align-items:center;justify-content:center;color:var(--orange);margin:0 auto 14px;
+}
+.type-icon svg{width:26px;height:26px;}
+.type-card h3{font-size:1.1rem;font-weight:900;margin-bottom:6px;}
+.type-card p{font-size:.86rem;color:var(--text-muted);}
+.type-card .type-check{
+  display:none;width:22px;height:22px;border-radius:50%;background:var(--orange);
+  align-items:center;justify-content:center;margin:12px auto 0;
+}
+.type-card .type-check svg{width:13px;height:13px;stroke:#110d0a;stroke-width:2.5;}
+.type-card.selected .type-check{display:flex;}
+
+/* ===== Form ===== */
+.form-section{padding-block:0 80px;}
+.community-form{
+  max-width:540px;margin:0 auto;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:36px;
+}
+.community-form[hidden]{display:none;}
+.form-title{font-size:1.2rem;font-weight:900;margin-bottom:6px;}
+.form-sub{font-size:.88rem;color:var(--text-muted);margin-bottom:28px;}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
+.field label{font-size:.84rem;font-weight:700;color:var(--text-muted);}
+.field label span{color:var(--orange);}
+.radio-group{display:flex;gap:10px;flex-wrap:wrap;}
+.radio-opt{
+  display:flex;align-items:center;gap:7px;
+  padding:10px 16px;border:1px solid var(--border);border-radius:999px;
+  cursor:pointer;font-size:.88rem;transition:all .2s;
+}
+.radio-opt:hover{border-color:var(--orange-dim);}
+.radio-opt input{accent-color:var(--orange);width:15px;height:15px;}
+.radio-opt.checked{border-color:var(--orange);color:var(--orange);background:rgba(255,90,31,.05);}
+.success-msg{
+  display:none;text-align:center;padding:40px 20px;
+}
+.success-msg .check-circle{
+  width:64px;height:64px;border-radius:50%;background:rgba(255,90,31,.1);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 18px;color:var(--orange);
+}
+.success-msg .check-circle svg{width:30px;height:30px;}
+.success-msg h3{font-size:1.3rem;font-weight:900;margin-bottom:8px;}
+.success-msg p{color:var(--text-muted);font-size:.92rem;}
+
+@media(max-width:600px){
+  .type-grid{grid-template-columns:1fr;}
+  .community-form{padding:24px;}
+}
+</style>
+</head>
+<body>
+<div id="headerMount"></div>
+
+<div class="page-head">
+  <div class="container">
+    <span class="page-eyebrow">مجتمع روبو</span>
+    <h1 class="page-title">انضم للمجتمع</h1>
+    <p class="page-sub">سواء كنت تبحث عن الانضمام لفريق Robokit أو مجتمع المهندسين — اختر وابدأ.</p>
+  </div>
+</div>
+
+<main>
+  <div class="type-section">
+    <div class="container">
+      <div class="type-grid">
+
+        <div class="type-card" id="card-team" onclick="selectType('team')">
+          <div class="type-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h3>فريق Robokit</h3>
+          <p>انضم لفريق العمل وكن جزءاً من بناء المشروع.</p>
+          <div class="type-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+        </div>
+
+        <div class="type-card" id="card-community" onclick="selectType('community')">
+          <div class="type-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg>
+          </div>
+          <h3>مجتمع روبو</h3>
+          <p>انضم لمجتمع المهندسين، تعلّم وابنِ مع غيرك.</p>
+          <div class="type-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="container">
+
+      <!-- فورم فريق -->
+      <div class="community-form" id="form-team" hidden>
+        <div id="success-team" class="success-msg">
+          <div class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <h3>تم استلام طلبك!</h3>
+          <p>شكراً لاهتمامك بالانضمام لفريق Robokit — سنتواصل معك قريباً.</p>
+        </div>
+        <div id="form-team-inner">
+          <h2 class="form-title">الانضمام لفريق Robokit</h2>
+          <p class="form-sub">أدخل بياناتك وسنتواصل معك في أقرب وقت.</p>
+          <div class="field"><label>الاسم الكامل <span>*</span></label><input type="text" id="t-name" placeholder="مثال: محمد أحمد"></div>
+          <div class="field"><label>رقم الهاتف <span>*</span></label><input type="tel" id="t-phone" placeholder="07xxxxxxxx"></div>
+          <div class="field"><label>مكان السكن <span>*</span></label><input type="text" id="t-city" placeholder="مثال: عمّان، الزرقاء..."></div>
+          <div class="field">
+            <label>مستواك بالأردوينو <span>*</span></label>
+            <div class="radio-group" id="t-level-group">
+              <label class="radio-opt"><input type="radio" name="t-level" value="متوسط"> متوسط</label>
+              <label class="radio-opt"><input type="radio" name="t-level" value="قوي"> قوي</label>
+              <label class="radio-opt"><input type="radio" name="t-level" value="سفّاح"> سفّاح</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>الجنس <span>*</span></label>
+            <div class="radio-group" id="t-gender-group">
+              <label class="radio-opt"><input type="radio" name="t-gender" value="ذكر"> ذكر</label>
+              <label class="radio-opt"><input type="radio" name="t-gender" value="أنثى"> أنثى</label>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="submitForm('team')">إرسال الطلب</button>
+        </div>
+      </div>
+
+      <!-- فورم مجتمع -->
+      <div class="community-form" id="form-community" hidden>
+        <div id="success-community" class="success-msg">
+          <div class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <h3>أهلاً بك في المجتمع!</h3>
+          <p>طلبك وصلنا — انتظر تواصلنا معك للانضمام لمجتمع روبو.</p>
+        </div>
+        <div id="form-community-inner">
+          <h2 class="form-title">الانضمام لمجتمع روبو</h2>
+          <p class="form-sub">انضم لمجتمع المهندسين وابدأ رحلتك.</p>
+          <div class="field"><label>الاسم الكامل <span>*</span></label><input type="text" id="c-name" placeholder="مثال: محمد أحمد"></div>
+          <div class="field"><label>رقم الهاتف <span>*</span></label><input type="tel" id="c-phone" placeholder="07xxxxxxxx"></div>
+          <div class="field"><label>مكان السكن <span>*</span></label><input type="text" id="c-city" placeholder="مثال: عمّان، الزرقاء..."></div>
+          <div class="field">
+            <label>مستواك بالأردوينو <span>*</span></label>
+            <div class="radio-group" id="c-level-group">
+              <label class="radio-opt"><input type="radio" name="c-level" value="مبتدئ"> مبتدئ</label>
+              <label class="radio-opt"><input type="radio" name="c-level" value="متوسط"> متوسط</label>
+              <label class="radio-opt"><input type="radio" name="c-level" value="قوي"> قوي</label>
+              <label class="radio-opt"><input type="radio" name="c-level" value="سفّاح"> سفّاح</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>الجنس <span>*</span></label>
+            <div class="radio-group" id="c-gender-group">
+              <label class="radio-opt"><input type="radio" name="c-gender" value="ذكر"> ذكر</label>
+              <label class="radio-opt"><input type="radio" name="c-gender" value="أنثى"> أنثى</label>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="submitForm('community')">انضم الآن</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="brand"><span class="brand-mark"><span class="bot-face"><span class="eye"></span><span class="eye"></span></span></span><span class="brand-text">ROBOKIT</span></div>
+    <div class="footer-links">
+      <a href="index.html">الرئيسية</a>
+      <a href="projects.html">الكيتات</a>
+      <a href="about.html">من نحن</a>
+    </div>
+    <span class="footer-copy">© 2026 Robokit</span>
+  </div>
+</footer>
+
+<div id="cartMount"></div>
+<div id="toast"></div>
+<script src="shared.js"></script>
+<script>
+let activeType = null;
+
+function selectType(type){
+  activeType = type;
+  document.getElementById('card-team').classList.toggle('selected', type==='team');
+  document.getElementById('card-community').classList.toggle('selected', type==='community');
+  document.getElementById('form-team').hidden = type!=='team';
+  document.getElementById('form-community').hidden = type!=='community';
+  setTimeout(()=>{
+    document.getElementById('form-'+type).scrollIntoView({behavior:'smooth',block:'start'});
+  },100);
+}
+
+// Style radio opts on change
+document.addEventListener('change', e=>{
+  if(!e.target.matches('input[type=radio]')) return;
+  const group = e.target.closest('.radio-group');
+  if(!group) return;
+  group.querySelectorAll('.radio-opt').forEach(opt=>{
+    opt.classList.toggle('checked', opt.querySelector('input').checked);
+  });
+});
+
+async function submitForm(type){
+  const pre = type==='team' ? 't' : 'c';
+  const name   = document.getElementById(pre+'-name').value.trim();
+  const phone  = document.getElementById(pre+'-phone').value.trim();
+  const city   = document.getElementById(pre+'-city').value.trim();
+  const level  = document.querySelector(`input[name="${pre}-level"]:checked`)?.value || '';
+  const gender = document.querySelector(`input[name="${pre}-gender"]:checked`)?.value || '';
+
+  if(!name||!phone||!city||!level||!gender){
+    showToast('فضلاً أكمل جميع الحقول المطلوبة');
+    return;
+  }
+
+  const entry = {
+    id: 'CM-'+Date.now().toString(36).toUpperCase(),
+    date: new Date().toISOString(),
+    type: type==='team' ? 'فريق Robokit' : 'مجتمع روبو',
+    name, phone, city, level, gender
+  };
+
+  // حفظ في التخزين المشترك (نفس آلية الطلبات)
+  try{
+    const existing = await storageGetCommunity();
+    existing.push(entry);
+    await storageSetCommunity(existing);
+  }catch(e){}
+
+  // إخفاء الفورم وإظهار رسالة النجاح
+  document.getElementById('form-'+type+'-inner').style.display='none';
+  document.getElementById('success-'+type).style.display='block';
+}
+
+async function storageGetCommunity(){
+  try{ const r=await window.storage?.get('community_requests',true); return r?.value?JSON.parse(r.value):[]; }catch(e){return[];}
+}
+async function storageSetCommunity(data){
+  try{ await window.storage?.set('community_requests',JSON.stringify(data),true); }catch(e){}
+}
+
+(async function(){
+  document.getElementById('headerMount').innerHTML = renderHeader('community');
+  document.getElementById('cartMount').innerHTML = renderCartDrawer();
+  updateCartBadge();
+  await detectApi();
+})();
+</script>
+</body>
+</html>
