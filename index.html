@@ -10,115 +10,109 @@
 <link rel="stylesheet" href="shared.css">
 <style>
 /* ===== Hero ===== */
-.hero{
-  position:relative;height:100vh;
-  display:flex;align-items:center;justify-content:center;
-  overflow:hidden;
+.hero {
+  height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
 }
-.hero::before{
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(var(--border) 1px,transparent 1px);
-  background-size:28px 28px;opacity:.35;
-  mask-image:radial-gradient(circle at 50% 50%,black 0%,transparent 72%);
-}
-.hero-inner{
-  position:relative;z-index:1;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;gap:0;
-}
-/* لوجو كبير */
-.logo-hero{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:28px;}
-.logo-robot{
-  width:90px;height:90px;border-radius:50%;background:var(--orange);
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 0 0 12px rgba(255,90,31,.08), 0 0 0 24px rgba(255,90,31,.04);
-}
-.logo-robot .face{
-  width:58%;height:46%;background:var(--bg);border-radius:14px;
-  display:flex;align-items:center;justify-content:center;gap:9px;
-}
-.logo-robot .eye{
-  width:11px;height:20px;background:var(--orange);border-radius:4px;
-  box-shadow:0 0 12px var(--orange);animation:blink 5s infinite;
-}
-.logo-robot .eye:nth-child(2){animation-delay:.12s;}
-.logo-wordmark{font-size:clamp(2.4rem,6vw,4.2rem);font-weight:900;letter-spacing:.08em;}
-.logo-wordmark span{color:var(--orange);}
+.hero-inner { display: flex; flex-direction: column; align-items: center; gap: 0; }
 
-.hero-tagline{
-  font-size:clamp(1rem,2.2vw,1.3rem);color:var(--text-muted);
-  margin-bottom:36px;max-width:480px;
+/* لوجو برتقالي كامل */
+.logo-hero { display: flex; align-items: center; gap: 18px; margin-bottom: 28px; }
+.logo-robot {
+  width: 90px; height: 90px; border-radius: 50%;
+  background: var(--orange);
+  display: flex; align-items: center; justify-content: center;
 }
-.hero-actions{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:52px;}
-.hero-stats{display:flex;gap:40px;flex-wrap:wrap;justify-content:center;}
-.hero-stat strong{display:block;font-family:'JetBrains Mono',monospace;font-size:1.6rem;color:var(--orange);margin-bottom:2px;}
-.hero-stat span{font-size:.8rem;color:var(--text-muted);}
+.logo-robot .face {
+  width: 58%; height: 46%; background: var(--bg);
+  border-radius: 14px; display: flex; align-items: center; justify-content: center; gap: 9px;
+}
+.logo-robot .eye {
+  width: 11px; height: 20px; background: var(--orange);
+  border-radius: 4px; box-shadow: 0 0 12px var(--orange);
+  animation: blink 5s infinite;
+}
+.logo-robot .eye:nth-child(2) { animation-delay: .12s; }
+.logo-wordmark {
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  font-weight: 900; letter-spacing: .08em;
+  color: var(--orange);
+}
+
+.hero-tagline {
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  color: var(--text-muted);
+  margin-bottom: 32px; max-width: 460px;
+}
+.hero-actions {
+  display: flex; gap: 14px; flex-wrap: wrap;
+  justify-content: center; margin-bottom: 48px;
+}
+.hero-stats { display: flex; gap: 40px; flex-wrap: wrap; justify-content: center; }
+.hero-stat strong {
+  display: block; font-family: 'JetBrains Mono', monospace;
+  font-size: 1.6rem; color: var(--orange); margin-bottom: 2px;
+}
+.hero-stat span { font-size: .8rem; color: var(--text-muted); }
 
 /* ===== يلا نهندس ===== */
-.lets-build{
-  padding-block:70px;text-align:center;border-top:1px solid var(--border);
+.lets-build {
+  padding-block: 70px; text-align: center;
+  border-top: 1px solid var(--border);
 }
-.lets-build-text{font-size:clamp(2.4rem,6vw,5rem);font-weight:900;line-height:1.1;}
-.lets-build-text span{color:var(--orange);}
-.lets-build-sub{
-  display:block;font-family:'JetBrains Mono',monospace;
-  font-size:.82rem;color:var(--text-faint);letter-spacing:.1em;margin-top:12px;
+.lets-build-text { font-size: clamp(2.4rem, 6vw, 5rem); font-weight: 900; color: var(--orange); }
+.lets-build-sub {
+  display: block; font-family: 'JetBrains Mono', monospace;
+  font-size: .82rem; color: var(--text-faint);
+  letter-spacing: .1em; margin-top: 12px;
 }
-/* Counter */
-.live-counter{
-  display:inline-flex;align-items:center;gap:8px;
-  font-family:'JetBrains Mono',monospace;font-size:.78rem;
-  color:var(--text-muted);margin-top:18px;
-}
-.counter-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;animation:pulse-dot 2s infinite;}
-@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.8)}}
 
 /* ===== Random kits ===== */
-.random-kits{padding-block:0 70px;border-bottom:1px solid var(--border);}
-.random-grid{
-  display:grid;grid-template-columns:repeat(2,1fr);gap:20px;
-  max-width:680px;margin-inline:auto;
+.random-kits { padding-block: 0 70px; border-bottom: 1px solid var(--border); }
+.random-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+  max-width: 680px; margin-inline: auto;
 }
-.kit-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  overflow:hidden;display:flex;flex-direction:column;
-  transition:border-color .2s,transform .2s;text-decoration:none;color:inherit;position:relative;
+.kit-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: border-color .2s, transform .2s;
+  text-decoration: none; color: inherit; position: relative;
 }
-.kit-card:hover{border-color:var(--orange-dim);transform:translateY(-3px);}
-.kit-card::before{
-  content:'';position:absolute;top:0;right:0;left:0;height:2px;
-  background:var(--orange);transform:scaleX(0);transform-origin:right;transition:transform .3s;
+.kit-card:hover { border-color: var(--orange-dim); transform: translateY(-3px); }
+.kit-card::before {
+  content: ''; position: absolute; top: 0; right: 0; left: 0; height: 2px;
+  background: var(--orange); transform: scaleX(0);
+  transform-origin: right; transition: transform .3s;
 }
-.kit-card:hover::before{transform:scaleX(1);}
-.kit-img{
-  aspect-ratio:16/9;background:var(--surface-2);
-  display:flex;align-items:center;justify-content:center;overflow:hidden;
+.kit-card:hover::before { transform: scaleX(1); }
+.kit-img {
+  aspect-ratio: 16/9; background: var(--surface-2);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
 }
-.kit-img img{width:100%;height:100%;object-fit:cover;}
-.kit-img .no-img{
-  display:flex;flex-direction:column;align-items:center;gap:6px;
-  color:var(--text-faint);font-size:.76rem;font-family:'JetBrains Mono',monospace;
+.kit-img img { width: 100%; height: 100%; object-fit: cover; }
+.kit-img .no-img {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  color: var(--text-faint); font-size: .72rem; font-family: 'JetBrains Mono', monospace;
 }
-.kit-img .no-img svg{width:28px;height:28px;}
-.kit-body{padding:20px;}
-.kit-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.kit-code{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--text-faint);}
-.kit-lvl{display:flex;gap:4px;}
-.kit-lvl span{width:7px;height:7px;border-radius:50%;background:var(--border);}
-.kit-lvl span.on{background:var(--orange);box-shadow:0 0 5px var(--orange);}
-.kit-title{font-size:1.05rem;font-weight:800;margin-bottom:6px;}
-.kit-desc{font-size:.86rem;color:var(--text-muted);flex-grow:1;margin-bottom:12px;}
-.kit-price{font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--orange);}
-.kit-price small{font-size:.75rem;color:var(--text-muted);font-weight:400;margin-inline-start:4px;}
+.kit-img .no-img svg { width: 26px; height: 26px; }
+.kit-body { padding: 20px; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
+.kit-code { font-family: 'JetBrains Mono', monospace; font-size: .75rem; color: var(--text-faint); }
+.kit-title { font-size: 1.05rem; font-weight: 800; }
+.kit-desc { font-size: .86rem; color: var(--text-muted); flex-grow: 1; }
+.kit-price { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 700; color: var(--orange); }
+.kit-price small { font-size: .75rem; color: var(--text-muted); font-weight: 400; margin-inline-start: 4px; }
 
 /* ===== CTA ===== */
-.all-kits{padding-block:60px;text-align:center;border-bottom:1px solid var(--border);}
-.all-kits p{color:var(--text-muted);font-size:.96rem;margin-bottom:22px;}
+.all-kits { padding-block: 60px; text-align: center; border-bottom: 1px solid var(--border); }
+.all-kits p { color: var(--text-muted); font-size: .96rem; margin-bottom: 22px; }
 
-@media(max-width:600px){
-  .random-grid{grid-template-columns:1fr;max-width:340px;}
-  .lets-build{padding-block:50px;}
-  .logo-hero{gap:12px;}
+@media(max-width: 600px) {
+  .random-grid { grid-template-columns: 1fr; max-width: 340px; }
+  .lets-build { padding-block: 50px; }
+  .logo-hero { gap: 12px; }
 }
 </style>
 </head>
@@ -133,7 +127,7 @@
       <div class="logo-robot">
         <div class="face"><span class="eye"></span><span class="eye"></span></div>
       </div>
-      <span class="logo-wordmark">ROBO<span>KIT</span></span>
+      <span class="logo-wordmark">ROBOKIT</span>
     </div>
     <p class="hero-tagline">كيتات أردوينو هندسية كاملة — القطع، الدليل، والفيديو في صندوق واحد.</p>
     <div class="hero-actions">
@@ -151,14 +145,8 @@
 <!-- يلا نهندس -->
 <div class="lets-build">
   <div class="container">
-    <span class="lets-build-text">يلا <span>نهندس</span></span>
+    <span class="lets-build-text">يلا نهندس</span>
     <span class="lets-build-sub">15 مشروع · 3 مستويات · كل قطعة جاهزة</span>
-    <div>
-      <span class="live-counter">
-        <span class="counter-dot"></span>
-        <span id="counterText">— شخص يتصفح هلأ</span>
-      </span>
-    </div>
   </div>
 </div>
 
@@ -179,7 +167,10 @@
 
 <footer class="site-footer" id="contact">
   <div class="container footer-inner">
-    <div class="brand"><span class="brand-mark"><span class="bot-face"><span class="eye"></span><span class="eye"></span></span></span><span class="brand-text">ROBOKIT</span></div>
+    <div class="brand">
+      <span class="brand-mark"><span class="bot-face"><span class="eye"></span><span class="eye"></span></span></span>
+      <span class="brand-text">ROBOKIT</span>
+    </div>
     <div class="footer-links">
       <a href="projects.html">الكيتات</a>
       <a href="videos.html">الفيديوهات</a>
@@ -195,37 +186,31 @@
 <div id="toast"></div>
 <script src="shared.js"></script>
 <script>
-const DOTS = {medium:1,strong:2,extreme:3};
+const DOTS = {medium:1, strong:2, extreme:3};
 let LEVELS = null;
-
-function startCounter(){
-  const el = document.getElementById('counterText');
-  function update(){
-    const n = 4 + Math.floor(Math.sin(Date.now()/8000)*2 + Math.random()*1.5);
-    el.textContent = n+' أشخاص يتصفحون هلأ';
-    setTimeout(update, 4000+Math.random()*3000);
-  }
-  update();
-}
 
 function renderRandomKits(){
   if(!LEVELS) return;
-  const all=[];
-  Object.entries(LEVELS).forEach(([lk,level])=>level.items.forEach(item=>all.push({lk,item})));
-  const picks = all.sort(()=>Math.random()-.5).slice(0,2);
-  document.getElementById('randomGrid').innerHTML = picks.map(({lk,item})=>{
-    const n=DOTS[lk];
-    const dots=[1,2,3].map(i=>`<span class="${i<=n?'on':''}"></span>`).join('');
+  const all = [];
+  Object.entries(LEVELS).forEach(([lk, level]) =>
+    level.items.forEach(item => all.push({lk, item}))
+  );
+  const picks = all.sort(() => Math.random() - .5).slice(0, 2);
+  document.getElementById('randomGrid').innerHTML = picks.map(({lk, item}) => {
     const imgHtml = item.image
       ? `<img src="${item.image}" alt="${escHtml(item.title)}" loading="lazy">`
-      : `<div class="no-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>${item.code}</span></div>`;
+      : `<div class="no-img">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+             <rect x="3" y="3" width="18" height="18" rx="3"/>
+             <circle cx="8.5" cy="8.5" r="1.5"/>
+             <path d="M21 15l-5-5L5 21"/>
+           </svg>
+           <span>${item.code}</span>
+         </div>`;
     return `<a href="kit.html?level=${lk}&code=${item.code}" class="kit-card">
       <div class="kit-img">${imgHtml}</div>
       <div class="kit-body">
-        <div class="kit-card-top">
-          <span class="kit-code">${item.code}</span>
-          <span class="kit-lvl">${dots}</span>
-        </div>
+        <span class="kit-code">${item.code}</span>
         <div class="kit-title">${escHtml(item.title)}</div>
         <div class="kit-desc">${escHtml(item.desc)}</div>
         <div class="kit-price">${kitTotal(item)}<small>${CURRENCY}</small></div>
@@ -238,7 +223,6 @@ function renderRandomKits(){
   document.getElementById('headerMount').innerHTML = renderHeader('home');
   document.getElementById('cartMount').innerHTML = renderCartDrawer();
   updateCartBadge();
-  startCounter();
   await detectApi();
   LEVELS = await loadCatalog();
   renderRandomKits();
