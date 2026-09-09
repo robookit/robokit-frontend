@@ -99,6 +99,7 @@ body{min-height:100vh;}
       <div class="panel-toolbar">
         <h2>الكيتات والأسعار</h2>
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm" id="addKitBtn">+ إضافة كيت جديد</button>
           <button class="btn btn-outline btn-sm" id="resetBtn">استعادة الافتراضي</button>
           <button class="btn btn-primary btn-sm" id="saveBtn">حفظ ونشر</button>
         </div>
@@ -258,7 +259,10 @@ function renderEditor(lk){
     <div class="kit-edit" data-level="${lk}" data-idx="${idx}">
       <div class="kit-edit-header">
         <span class="kit-edit-code">${item.code}</span>
-        <label class="badge-toggle"><input type="checkbox" class="f-badge" ${item.badge?'checked':''}> الأكثر طلبًا</label>
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <label class="badge-toggle"><input type="checkbox" class="f-badge" ${item.badge?'checked':''}> الأكثر طلبًا</label>
+          <button class="btn btn-outline btn-sm del-kit" type="button">حذف الكيت</button>
+        </div>
       </div>
       <div class="field"><label>عنوان المشروع</label><input type="text" class="f-title" value="${escHtml(item.title)}"></div>
       <div class="field"><label>الوصف</label><textarea class="f-desc">${escHtml(item.desc)}</textarea></div>
@@ -325,6 +329,23 @@ document.getElementById('catalogEditor').addEventListener('change',e=>{
   }
 });
 document.getElementById('catalogEditor').addEventListener('click',e=>{
+  const delKit=e.target.closest('.del-kit');
+  if(delKit){
+    const ke=delKit.closest('.kit-edit');
+    const lk=ke.dataset.level, idx=Number(ke.dataset.idx);
+    if(!delKit.classList.contains('confirm-state')){
+      delKit.classList.add('confirm-state'); delKit.textContent='تأكيد الحذف؟';
+      clearTimeout(delKit._t);
+      delKit._t=setTimeout(()=>{delKit.classList.remove('confirm-state');delKit.textContent='حذف الكيت';},3000);
+      return;
+    }
+    clearTimeout(delKit._t);
+    if(LEVELS[lk].items.length<=1){ showToast('لازم يبقى كيت واحد على الأقل بكل مستوى'); return; }
+    LEVELS[lk].items.splice(idx,1);
+    renderEditor(lk);
+    showToast('تم حذف الكيت — لا تنس الضغط على "حفظ ونشر"');
+    return;
+  }
   const rm=e.target.closest('.rm-part');
   if(rm){
     const ke=rm.closest('.kit-edit');
@@ -346,6 +367,29 @@ document.getElementById('catalogEditor').addEventListener('click',e=>{
     renderEditor(ke.dataset.level);
     showToast('تم حذف الصورة');
   }
+});
+
+document.getElementById('addKitBtn').addEventListener('click', ()=>{
+  const activeTab = document.querySelector('.cat-level-tab.active');
+  const lk = activeTab ? activeTab.dataset.level : 'medium';
+  const level = LEVELS[lk];
+  const prefix = {medium:'MED', strong:'STR', extreme:'EXT'}[lk] || lk.toUpperCase();
+  let n = level.items.length + 1;
+  let code = prefix+'-'+String(n).padStart(2,'0');
+  while(level.items.some(i=>i.code===code)){ n++; code = prefix+'-'+String(n).padStart(2,'0'); }
+  level.items.push({
+    code,
+    title:'مشروع جديد',
+    desc:'أضف وصف المشروع هنا.',
+    badge:false,
+    parts:[{name:'قطعة أساسية', price:0, core:true}]
+  });
+  renderEditor(lk);
+  showToast('تمت إضافة كيت جديد — عدّل التفاصيل ثم اضغط "حفظ ونشر"');
+  setTimeout(()=>{
+    const cards=document.querySelectorAll('.kit-edit');
+    cards[cards.length-1]?.scrollIntoView({behavior:'smooth', block:'start'});
+  },50);
 });
 
 document.getElementById('saveBtn').addEventListener('click', async()=>{
